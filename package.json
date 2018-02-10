@@ -1,0 +1,35 @@
+{
+  "name": "gather-app",
+  "version": "1.0.0",
+  "description": "",
+  "main": "server.js",
+  "dependencies": {
+    "bcryptjs": "^2.4.3",
+    "body-parser": "^1.18.2",
+    "express": "^4.16.2",
+    "jsonwebtoken": "^8.1.1",
+    "mongoose": "^5.0.3",
+    "passport": "^0.4.0",
+    "passport-jwt": "^3.0.1",
+    "passport-local": "^1.0.0"
+  },
+  "devDependencies": {
+    "chai": "^4.1.2",
+    "chai-http": "^3.0.0",
+    "mocha": "^5.0.0"
+  },
+  "scripts": {
+    "test": "mocha --exit",
+    "start": "node --inspect server.js"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/lizzitnik/gather-app.git"
+  },
+  "author": "",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/lizzitnik/gather-app/issues"
+  },
+  "homepage": "https://github.com/lizzitnik/gather-app#readme"
+}
