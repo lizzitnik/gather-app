@@ -16,8 +16,8 @@ const gatheringSchema = mongoose.Schema({
 	attending: {type: Number, default: 0},
 	restaurant: {type: String, required: true},
 	address: {type: String, required: true},
-	date: {type: Date},
-	time: {type: Date}
+	// date: {type: Date},
+	// time: {type: Date}
 });
 
 userSchema.methods.serialize = function() {
@@ -37,8 +37,8 @@ gatheringSchema.methods.serialize = function() {
 		attending: this.attending,
 		restaurant: this.restaurant,
 		address: this.address,
-		date: this.date,
-		time: this.time
+		// date: this.date,
+		// time: this.time
 	};
 }
 

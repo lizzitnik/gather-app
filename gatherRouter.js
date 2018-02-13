@@ -31,7 +31,7 @@ router.get('/:id', (req, res) => {
     	.then(post => res.json(post.serialize()))
     	.catch(err => {
       		console.error(err);
-      		res.status(500).json({ error: 'something went horribly awry' });
+      		res.status(500).json({ error: 'something went wrong' });
     });
 });
 

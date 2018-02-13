@@ -11,7 +11,7 @@ h1 {
   margin-bottom: 120px;
 }
 
-body{
+body {
   margin:0;
   color: rgba(211, 170, 149, .7);
   background: linear-gradient(rgba(255,255,255,0.2),rgba(255,255,255, 0.9)), url(https://media.glamour.com/photos/56959a2c93ef4b09520d6401/master/pass/home-2015-11-thanksgiving-dinner-stocksy-main.jpg) no-repeat center;
@@ -25,6 +25,7 @@ body{
 a{color:inherit;text-decoration:none}
 
 .login-wrap{
+  display: none;
   width:100%;
   margin:auto;
   max-width:525px;
@@ -184,13 +185,12 @@ a{color:inherit;text-decoration:none}
   text-align:center;
 }
 
-.create-form {
+.create-page {
 	margin: auto, 0;
 	width: 100%;
 	max-width: 525px;
   	min-height: 653px;
   	position: relative;
-  	display: none;
   	padding: 90px 70px 50px 70px;
  	background: rgba(107, 47, 35, 0.9);;
 }
