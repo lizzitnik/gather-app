@@ -4,8 +4,7 @@ require('dotenv').config();
 
 const bodyParser = require('body-parser');
 
-const DATABASE_URL = process.env.DATABASE_URL || 'mongodb://localhost/gather-app';
-const PORT = process.env.PORT || 8080;
+const { PORT, DATABASE_URL } = require('./config');
 
 const express = require('express');
 const app = express();
@@ -13,8 +12,8 @@ const passport = require('passport');
 
 const gatherRouter = require('./gatherRouter');
 const usersRouter = require('./userRouter');
-const { router: authRouter, localStrategy, jwtStrategy } = require('./authRouter');
-const { router: authRouter, localStrategy, jwtStrategy } = require('./authStrategies');
+const authRouter = require('./authRouter');
+const { localStrategy, jwtStrategy } = require('./authStrategies');
 
 const mongoose = require('mongoose');
 mongoose.Promise = global.Promise;
@@ -41,7 +40,7 @@ app.use(function (req, res, next) {
 
 const jwtAuth = passport.authenticate('jwt', { session: false });
 
-app.get('/api/protected', jwtAuth, (req, res) => {
+app.get('/protected', jwtAuth, (req, res) => {
   return res.json({
     data: 'rosebud'
   });

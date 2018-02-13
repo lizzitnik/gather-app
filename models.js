@@ -1,4 +1,5 @@
 
+const bcrypt = require('bcryptjs');
 const mongoose = require('mongoose');
 mongoose.Promise = global.Promise;
 
@@ -14,9 +15,9 @@ const gatheringSchema = mongoose.Schema({
 	title: {type: String, required: true},
 	attending: {type: Number, default: 0},
 	restaurant: {type: String, required: true},
-	address: {type: String, required: true}
-	// date: {type: Date, required: false},
-	// time: {type: Date, required: false}
+	address: {type: String, required: true},
+	date: {type: Date},
+	time: {type: Date}
 });
 
 userSchema.methods.serialize = function() {
@@ -35,9 +36,9 @@ gatheringSchema.methods.serialize = function() {
 		title: this.title,
 		attending: this.attending,
 		restaurant: this.restaurant,
-		address: this.address
-		// date: this.date,
-		// time: this.time
+		address: this.address,
+		date: this.date,
+		time: this.time
 	};
 }
 
@@ -46,7 +47,7 @@ userSchema.methods.validatePassword = function(password) {
 };
 
 userSchema.statics.hashPassword = function(password) {
-  return bcrypt.hash(password, 10);
+  return bcrypt.hash(password, 8);
 };
 
 

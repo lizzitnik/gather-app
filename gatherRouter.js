@@ -54,8 +54,8 @@ router.post('/', (req, res) => {
       attending: req.body.attending,
       restaurant: req.body.restaurant,
       address: req.body.address,
-      // date: req.body.date,
-      // time: req.body.time
+      date: req.body.date,
+      time: req.body.time
     })
     .then(gatherings => res.status(201).json(gatherings.serialize()))
     .catch(err => {
