@@ -64,12 +64,7 @@ function addGathering(gathering) {
     data: JSON.stringify(gathering),
     success: function(data) {
       getAndDisplayGatherings()
-    },
-    headers: {
-      TOKEN: localStorage.getItem("TOKEN")
-    },
-    dataType: "json",
-    contentType: "application/json"
+    }
   })
 }
 
@@ -81,9 +76,7 @@ function addUser(user) {
     data: JSON.stringify(user),
     success: function(data) {
       getAndDisplayUsers()
-    },
-    dataType: "json",
-    contentType: "application/json"
+    }
   })
 }
 
@@ -127,28 +120,12 @@ function login(userCreds) {
     url: "/auth/login",
     method: "POST",
     data: JSON.stringify(userCreds),
-    success: addTokenToLocalStorage,
-    dataType: "json",
-    contentType: "application/json"
+    success: addTokenToLocalStorage
   })
 }
 
 function addTokenToLocalStorage(response) {
   localStorage.setItem("TOKEN", response.authToken)
-  getUser()
-}
-
-function getUser() {
-  $.ajax({
-    url: "/user",
-    method: "POST",
-    success: showUser,
-    dataType: "json",
-    contentType: "application/json",
-    headers: {
-      TOKEN: localStorage.getItem("TOKEN")
-    }
-  })
 }
 
 function updateGathering(gathering) {
@@ -212,16 +189,16 @@ function handleUserAdd() {
     e.preventDefault()
     addUser({
       firstName: $(this)
-        .find("#first-name")
+        .find(".first-name")
         .val(),
       lastName: $(this)
-        .find("#last-name")
+        .find(".last-name")
         .val(),
-      userName: $(this)
-        .find("#user")
+      username: $(this)
+        .find(".user")
         .val(),
       password: $(this)
-        .find("#pass")
+        .find(".pass")
         .val()
     })
   })
@@ -252,7 +229,18 @@ function handleNumberAttending() {
   })
 }
 
+function setupAjax() {
+  $.ajaxSetup({
+    dataType: "json",
+    contentType: "application/json",
+    headers: {
+      Authorization: "JWT " + localStorage.getItem("TOKEN")
+    }
+  })
+}
+
 $(function() {
+  setupAjax()
   getAndDisplayGatherings()
   handleGatheringAdd()
   handleGatheringDelete()

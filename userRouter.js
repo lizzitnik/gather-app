@@ -112,13 +112,8 @@ router.post("/", jsonParser, (req, res) => {
       })
     })
     .then(user => {
+      debugger
       return res.status(201).json(user.serialize())
-    })
-    .catch(err => {
-      if (err.reason === "ValidationError") {
-        return res.status(err.code).json(err)
-      }
-      res.status(500).json({ code: 500, message: "Internal server error" })
     })
 })
 

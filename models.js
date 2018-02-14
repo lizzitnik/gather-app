@@ -2,14 +2,6 @@ const bcrypt = require("bcryptjs")
 const mongoose = require("mongoose")
 mongoose.Promise = global.Promise
 
-const userSchema = mongoose.Schema({
-  password: { type: String, required: true },
-  username: { type: String, required: true, unique: true },
-  firstName: { type: String, dafaul: "" },
-  lastName: { type: String, default: "" }
-  // gatherings: [{ type: Schema.Types.ObjectId, ref: "Gathering" }]
-})
-
 const gatheringSchema = mongoose.Schema({
   title: { type: String, required: true },
   attending: { type: Number, default: 0 },
@@ -19,22 +11,20 @@ const gatheringSchema = mongoose.Schema({
   time: { type: Date }
 })
 
-const attendeeSchema = mongoose.Schema({
-  host: { type: Boolean },
-  gatheringId: { type: String },
-  userId: { type: String }
+const userSchema = mongoose.Schema({
+  password: { type: String, required: true },
+  username: { type: String, required: true, unique: true },
+  firstName: { type: String, dafault: "" },
+  lastName: { type: String, default: "" },
+  gatherings: [{ type: mongoose.Schema.Types.ObjectId, ref: "Gathering" }]
 })
 
 userSchema.methods.serialize = function() {
   return {
     id: this._id,
     username: this.username,
-    password: this.password,
     firstName: this.firstName,
-    lastName: this.lastName,
-    gatherings: this.gatherings.map(gId => {
-      return Gathering.findById(gId)
-    })
+    lastName: this.lastName
   }
 }
 

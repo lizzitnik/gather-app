@@ -1,5 +1,6 @@
 const express = require("express")
 const router = express.Router()
+const passport = require("passport")
 
 const bodyParser = require("body-parser")
 const jsonParser = bodyParser.json()
@@ -7,19 +8,21 @@ const jsonParser = bodyParser.json()
 const mongoose = require("mongoose")
 mongoose.Promise = global.Promise
 
-const { Gathering } = require("./models")
+const { Gathering, User } = require("./models")
 
-router.get("/", (req, res) => {
-  Gathering.find()
-    .limit(10)
-    .then(gatherings => {
+const jwtAuth = passport.authenticate("jwt", { session: false })
+
+router.get("/", jwtAuth, (req, res) => {
+  User.findById(req.user.id)
+    .populate("gatherings")
+    .then(user => {
       res.json({
-        gatherings: gatherings.map(gathering => gathering.serialize())
+        gatherings: user.gatherings.map(gathering => gathering.serialize())
       })
     })
     .catch(err => {
       console.error(err)
-      res.status(500).json({ message: "Internal server error" })
+      res.status(500).json({ message: err })
     })
 })
 
@@ -32,9 +35,7 @@ router.get("/:id", (req, res) => {
     })
 })
 
-router.use(bodyParser.json())
-
-router.post("/", (req, res) => {
+router.post("/", jwtAuth, (req, res) => {
   const requiredFields = ["title", "restaurant", "address"]
   for (let i = 0; i < requiredFields.length; i++) {
     const field = requiredFields[i]
@@ -53,7 +54,16 @@ router.post("/", (req, res) => {
     date: req.body.date,
     time: req.body.time
   })
-    .then(gatherings => res.status(201).json(gatherings.serialize()))
+    .then(gathering => {
+      User.findByIdAndUpdate(
+        req.user.id,
+        { $push: { gatherings: gathering._id } },
+        function(err, model) {
+          console.log(err)
+        }
+      )
+      res.status(201).json(gathering.serialize())
+    })
     .catch(err => {
       console.error(err)
       res.status(500).json({ error: err })
