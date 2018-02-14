@@ -21,7 +21,7 @@
   },
   "scripts": {
     "test": "mocha --exit",
-    "start": "node --inspect server.js"
+    "start": "nodemon --inspect server.js"
   },
   "repository": {
     "type": "git",
