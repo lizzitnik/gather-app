@@ -1,73 +1,112 @@
 <!DOCTYPE html>
 <html>
 <head>
-	<title>Google Search Map</title>
+	<title>Gathering Search Map</title>
 	<meta name="viewport" content="initial-scale=1.0, user-scalable=no">
-    <meta charset="utf-8">
+  <meta charset="utf-8">
+  <link rel="stylesheet" href="/map.css">
 
 </head>
-<body>
-	<div id="findhotels">
-      Find Gatherings in:
+  <body>
+    <header role='navigation'>
+      <div class='navigation'>
+        <span id="findrestaurants">
+            Find Gatherings in:
+        </span>
+
+        <form id="locationField">
+          <label for='autocomplete'></label>
+          <input id="autocomplete" placeholder="Enter a city" type="text" />
+        </form>
+
+        <form id="controls">
+          <select id="country">
+            <option value="all">All</option>
+            <option value="au">Australia</option>
+            <option value="br">Brazil</option>
+            <option value="ca">Canada</option>
+            <option value="fr">France</option>
+            <option value="de">Germany</option>
+            <option value="mx">Mexico</option>
+            <option value="nz">New Zealand</option>
+            <option value="it">Italy</option>
+            <option value="za">South Africa</option>
+            <option value="es">Spain</option>
+            <option value="pt">Portugal</option>
+            <option value="us" selected>U.S.A.</option>
+            <option value="uk">United Kingdom</option>
+          </select>
+        </form>
+        
+        <div action='#' class="create-form">
+          <label for='create-button'>OR you can <button type='submit' class='button create-button'>create</button> a new gathering</label>
+        </div>
+      </div>
+    </header>
+
+    <div class='gathering-container'>
+
+      <form class='gathering-form'>
+        <div class='gathering-contents'>
+         <h2>Please create a custom gathering below.</h2>
+         <label class='label title-label' for='title'>Title:</label>
+         <input type='text' id='title'>
+         <label class='label restaurant-label' for='restaurant'>Restaurant:</label>
+         <input type='text' id='restaurant'>
+         <label class='label address-label' for='address'>Address:</label>
+         <input type='text' id='address'>
+
+         <button type='submit' class='gathering-button' onclick='codeAddress()'>Gather</button>
+       </div>
+      </form>
     </div>
 
-    <div id="locationField">
-      <input id="autocomplete" placeholder="Enter a city" type="text" />
-    </div>
 
-    <div id="controls">
-      <select id="country">
-        <option value="all">All</option>
-        <option value="au">Australia</option>
-        <option value="br">Brazil</option>
-        <option value="ca">Canada</option>
-        <option value="fr">France</option>
-        <option value="de">Germany</option>
-        <option value="mx">Mexico</option>
-        <option value="nz">New Zealand</option>
-        <option value="it">Italy</option>
-        <option value="za">South Africa</option>
-        <option value="es">Spain</option>
-        <option value="pt">Portugal</option>
-        <option value="us" selected>U.S.A.</option>
-        <option value="uk">United Kingdom</option>
-      </select>
-    </div>
+    <main role='main' class='map-container'>
 
-    <div id="map"></div>
+      <div id="map"></div>
 
-    <div id="listing">
-      <table id="resultsTable">
-        <tbody id="results"></tbody>
-      </table>
-    </div>
-
-    <div style="display: none">
-      <div id="info-content">
-        <table>
-          <tr id="iw-url-row" class="iw_table_row">
-            <td id="iw-icon" class="iw_table_icon"></td>
-            <td id="iw-url"></td>
-          </tr>
-          <tr id="iw-address-row" class="iw_table_row">
-            <td class="iw_attribute_name">Address:</td>
-            <td id="iw-address"></td>
-          </tr>
-          <tr id="iw-phone-row" class="iw_table_row">
-            <td class="iw_attribute_name">Telephone:</td>
-            <td id="iw-phone"></td>
-          </tr>
-          <tr id="iw-rating-row" class="iw_table_row">
-            <td class="iw_attribute_name">Rating:</td>
-            <td id="iw-rating"></td>
-          </tr>
-          <tr id="iw-website-row" class="iw_table_row">
-            <td class="iw_attribute_name">Website:</td>
-            <td id="iw-website"></td>
-          </tr>
+      <div id="listing">
+        <table id="resultsTable">
+          <tbody id="results"></tbody>
         </table>
       </div>
-    </div>
 
-</body>
+      <div style="display: none">
+        <div id="info-content">
+          <table>
+            <tr id="iw-url-row" class="iw_table_row">
+              <td id="iw-icon" class="iw_table_icon"></td>
+              <td id="iw-url"></td>
+            </tr>
+            <tr id="iw-address-row" class="iw_table_row">
+              <td class="iw_attribute_name">Address:</td>
+              <td id="iw-address"></td>
+            </tr>
+            <tr id="iw-phone-row" class="iw_table_row">
+              <td class="iw_attribute_name">Telephone:</td>
+              <td id="iw-phone"></td>
+            </tr>
+            <tr id="iw-rating-row" class="iw_table_row">
+              <td class="iw_attribute_name">Rating:</td>
+              <td id="iw-rating"></td>
+            </tr>
+            <tr id="iw-website-row" class="iw_table_row">
+              <td class="iw_attribute_name">Website:</td>
+              <td id="iw-website"></td>
+            </tr>
+          </table>
+        </div>
+      </div>
+
+      <script src="//code.jquery.com/jquery-3.1.1.min.js"
+      integrity="sha256-hVVnYaiADRTO2PzUGmuLJr8BLUSjGIZsDYGmIJLv2b8="
+      crossorigin="anonymous"></script>
+      <script src="/map.js"></script>
+      <script src="map.json"></script>
+      <script src="/client.js"></script>
+      <script type="text/javascript" src="https://maps.googleapis.com/maps/api/js?key=AIzaSyCkLUXCj8TI7176DiEm07rAl5qdwvRwilo&libraries=places&callback=initMap" async default></script>
+
+    </main>
+  </body>
 </html>

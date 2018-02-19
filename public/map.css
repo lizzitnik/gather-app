@@ -1,0 +1,128 @@
+/*main {
+  display: none;
+}*/
+
+* {
+  box-sizing: border-box;
+}
+
+
+
+html, body {
+  margin: 0;
+  padding: 0;
+  height: 100%;
+}
+
+table {
+  font-size: 12px;
+}
+
+#map {
+  min-height: 900px;
+}
+
+#listing {
+  position: relative;
+  width: 200px;
+  height: 470px;
+  overflow: auto;
+  left: 400px;
+  top: 20px;
+  cursor: pointer;
+  overflow-x: hidden;
+}
+
+#findrestaurants {
+  position: absolute;
+  text-align: left;
+  font-size: 16px;
+  padding: 4px;
+  z-index: 5;
+  color: #fff;
+  margin-top: 15px;
+  margin-left: 15px;
+  /*background-color: #fff;*/
+}
+#locationField {
+  position: absolute;
+  width: 190px;
+  height: 25px;
+  left: 150px;
+  top: 15px;
+  z-index: 5;
+  /*background-color: #fff;*/
+}
+#controls {
+  position: absolute;
+  left: 350px;
+  width: 140px;
+  top: 15px;
+  z-index: 5;
+  /*background-color: #fff;*/
+}
+#autocomplete {
+  width: 100%;
+}
+#country {
+  width: 100%;
+}
+.placeIcon {
+  width: 20px;
+  height: 34px;
+  margin: 4px;
+}
+.restaurantIcon {
+  width: 24px;
+  height: 24px;
+}
+#resultsTable {
+  border-collapse: collapse;
+  width: 240px;
+}
+#rating {
+  font-size: 13px;
+  font-family: Arial Unicode MS;
+}
+.iw_table_row {
+  height: 18px;
+}
+.iw_attribute_name {
+  font-weight: bold;
+  text-align: right;
+}
+.iw_table_icon {
+  text-align: right;
+  margin: auto, 0;
+  width: 100%;
+  max-width: 525px;
+  min-height: 653px;
+  position: relative;
+  padding: 90px 70px 50px 70px;
+  background: rgba(107, 47, 35, 0.9);
+  display: none;
+}
+
+.create-form {
+  position: absolute;
+  margin-left: 150px;
+  margin-top: 50px;
+  z-index: 5;
+  color: #fff;
+}
+
+.gathering-form {
+  display: none;
+  padding: 50px;
+  text-align: center;
+}
+
+.gathering-form:after {
+  display: block;
+}
+
+
+
+
+
+

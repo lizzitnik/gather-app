@@ -12,8 +12,23 @@ const { Gathering, User } = require("./models")
 
 const jwtAuth = passport.authenticate("jwt", { session: false })
 
-router.get("/", jwtAuth, (req, res) => {
-  User.findById(req.user.id)
+router.get("/", (req, res) => {
+  Gathering
+    .find()
+    .then(gatherings => {
+      res.json({
+        gatherings: gatherings.map(gathering => gathering.serialize())
+      })
+    })
+    .catch(err => {
+      console.error(err)
+      res.status(500).json({ message: err })
+    })
+})
+
+router.get("/mygatherings", jwtAuth, (req, res) => {
+  User
+    .findById(req.user.id)
     .populate("gatherings")
     .then(user => {
       res.json({
