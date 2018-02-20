@@ -65,7 +65,9 @@ router.post("/", jwtAuth, (req, res) => {
     restaurant: req.body.restaurant,
     address: req.body.address,
     date: req.body.date,
-    time: req.body.time
+    time: req.body.time,
+    lat: req.body.lat,
+    lng: req.body.lng
   })
     .then(gathering => {
       User.findByIdAndUpdate(

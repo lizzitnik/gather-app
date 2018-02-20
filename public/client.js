@@ -23,13 +23,14 @@ const serverBase = "//localhost:8080/"
 const USER_URL = serverBase + "users"
 const GATHERINGS_URL = serverBase + "gatherings"
 
-function getAndDisplayGatherings() {
+function getAndDisplayGatherings(data) {
   console.log("retrieving gatherings")
 
   $.getJSON(GATHERINGS_URL, displayGatherings)
 }
 
 function displayGatherings(data) {
+  var bounds = new google.maps.LatLngBounds()
   const gatheringsElement = data.gatherings.map(function(gathering) {
     let element = $(gatheringTemplate)
     element.attr("id", gathering.id)
@@ -39,10 +40,31 @@ function displayGatherings(data) {
     element.find(".gathering-address").text(gathering.address)
     element.find(".gathering-date").text(gathering.date)
     element.find(".gathering-time").text(gathering.time)
-
+    const location = new google.maps.LatLng({
+      lat: gathering.lat,
+      lng: gathering.lng
+    })
+    var marker = new google.maps.Marker({
+      map: map,
+      position: location
+    })
+    bounds.extend(marker.position)
     return element
   })
+  map.fitBounds(bounds)
   $(".gatherings").html(gatheringsElement)
+}
+
+function displaySingleGathering(data) {
+  const location = new google.maps.LatLng({
+    lat: data.lat,
+    lng: data.lng
+  })
+  var marker = new google.maps.Marker({
+    map: map,
+    position: location
+  })
+  map.setCenter(location)
 }
 
 function myGatherings() {
@@ -59,9 +81,7 @@ function addGathering(gathering) {
     method: "POST",
     url: GATHERINGS_URL,
     data: JSON.stringify(gathering),
-    success: function(data) {
-      getAndDisplayGatherings()
-    }
+    success: displaySingleGathering
   })
 }
 
@@ -127,29 +147,52 @@ function updateGathering(gathering) {
     }
   })
 }
+//
+// function codeAddress(address) {
+//   console.log(address)
+//   geocoder.geocode({ address: address }, function(results, status) {
+//     if (status == "OK") {
+//       map.setCenter(results[0].geometry.location)
+//       var marker = new google.maps.Marker({
+//         map: map,
+//         animation: google.maps.Animation.DROP,
+//         position: results[0].geometry.location
+//       })
+//     } else {
+//       alert("Geocode was not successful for the following reason: " + status)
+//     }
+//   })
+// }
 
 function handleGatheringAdd() {
   console.log("preparing to add")
   $(".gathering-form").submit(function(e) {
     e.preventDefault()
+    const address = $(this)
+      .find("#address")
+      .val()
+    const title = $(this)
+      .find("#title")
+      .val()
+    const restaurant = $(this)
+      .find("#restaurant")
+      .val()
+    const date = $(this)
+      .find("#date")
+      .val()
+    const time = $(this)
+      .find("#time")
+      .val()
+
+    geocoder.geocode({ address: address }, function(results, status) {
       addGathering({
-        lng: position.coords.longitude,
-        lat: position.coords.latitude,
-        title: $(this)
-          .find("#title")
-          .val(),
-        restaurant: $(this)
-          .find("#restaurant")
-          .val(),
-        address: $(this)
-          .find("#address")
-          .val(),
-        date: $(this)
-          .find("#date")
-          .val(),
-        time: $(this)
-          .find("#time")
-          .val()
+        lng: results[0].geometry.location.lng(),
+        lat: results[0].geometry.location.lat(),
+        address: address,
+        date: date,
+        time: time,
+        restaurant: restaurant,
+        title: title
       })
       $("#title").val("")
       $("#restaurant").val("")
@@ -157,7 +200,6 @@ function handleGatheringAdd() {
       $("#date").val("")
       $("#time").val("")
     })
-    console.log("adding")
   })
 }
 
@@ -248,12 +290,8 @@ function setupAjax() {
 
 $(function() {
   setupAjax()
-  getAndDisplayGatherings()
   handleGatheringAdd()
   handleGatheringDelete()
   handleUserAdd()
   handleLogin()
-  myGatherings()
-  navigator.geolocation.getCurrentPosition(function(position) {
-
 })
