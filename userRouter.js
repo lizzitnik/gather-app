@@ -88,7 +88,7 @@ router.post("/", jsonParser, (req, res) => {
 
   firstName = firstName.trim()
   lastName = lastName.trim()
-
+  debugger
   return User.find({ username })
     .count()
     .then(count => {
@@ -100,7 +100,6 @@ router.post("/", jsonParser, (req, res) => {
           location: "username"
         })
       }
-
       return User.hashPassword(password)
     })
     .then(hash => {

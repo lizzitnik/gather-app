@@ -26,20 +26,30 @@ const GATHERINGS_URL = serverBase + "gatherings"
 function getAndDisplayGatherings() {
   console.log("retrieving gatherings")
 
-  $.getJSON(GATHERINGS_URL, function(data) {
-    const gatheringsElement = data.gatherings.map(function(gathering) {
-      let element = $(gatheringTemplate)
-      element.attr("id", gathering.id)
-      element.find(".gathering-title").text(gathering.title)
-      element.find(".number-attending").text(gathering.attending)
-      element.find(".gathering-restaurant").text(gathering.restaurant)
-      element.find(".gathering-address").text(gathering.address)
-      element.find(".gathering-date").text(gathering.date)
-      element.find(".gathering-time").text(gathering.time)
+  $.getJSON(GATHERINGS_URL, displayGatherings)
+}
 
-      return element
-    })
-    $(".gatherings").html(gatheringsElement)
+function displayGatherings(data) {
+  const gatheringsElement = data.gatherings.map(function(gathering) {
+    let element = $(gatheringTemplate)
+    element.attr("id", gathering.id)
+    element.find(".gathering-title").text(gathering.title)
+    element.find(".number-attending").text(gathering.attending)
+    element.find(".gathering-restaurant").text(gathering.restaurant)
+    element.find(".gathering-address").text(gathering.address)
+    element.find(".gathering-date").text(gathering.date)
+    element.find(".gathering-time").text(gathering.time)
+
+    return element
+  })
+  $(".gatherings").html(gatheringsElement)
+}
+
+function myGatherings() {
+  $.ajax({
+    method: "GET",
+    url: "/gatherings/my",
+    success: displayGatherings
   })
 }
 
@@ -55,10 +65,7 @@ function addGathering(gathering) {
   })
 }
 
-function getAndDisplayUsers() {
-  console.log('retrieving users')
-}
-
+function getAndDisplayUsers() {}
 
 function deleteGathering(gatheringId) {
   console.log("Deleting gathering`" + gatheringId + "`")
@@ -89,7 +96,7 @@ function login(userCreds) {
 
 function addTokenToLocalStorage(response) {
   localStorage.setItem("TOKEN", response.authToken)
-  window.location.href = '/map.html';
+  window.location.href = "/map.html"
 }
 
 function handleLogin() {
@@ -106,8 +113,6 @@ function handleLogin() {
         .find(".pass")
         .val()
     })
-
-
   })
 }
 
@@ -126,41 +131,52 @@ function updateGathering(gathering) {
 function handleGatheringAdd() {
   console.log("preparing to add")
   $(".gathering-form").submit(function(e) {
-    console.log("adding")
     e.preventDefault()
-    addGathering({
-      title: $(this)
-        .find("#title")
-        .val(),
-      restaurant: $(this)
-        .find("#restaurant")
-        .val(),
-      address: $(this)
-        .find("#address")
-        .val(),
-      date: $(this)
-        .find("#date")
-        .val(),
-      time: $(this)
-        .find("#time")
-        .val()
+      addGathering({
+        lng: position.coords.longitude,
+        lat: position.coords.latitude,
+        title: $(this)
+          .find("#title")
+          .val(),
+        restaurant: $(this)
+          .find("#restaurant")
+          .val(),
+        address: $(this)
+          .find("#address")
+          .val(),
+        date: $(this)
+          .find("#date")
+          .val(),
+        time: $(this)
+          .find("#time")
+          .val()
+      })
+      $("#title").val("")
+      $("#restaurant").val("")
+      $("#address").val("")
+      $("#date").val("")
+      $("#time").val("")
     })
-    $("#title").val("")
-    $("#restaurant").val("")
-    $("#address").val("")
-    $("#date").val("")
-    $("#time").val("")
+    console.log("adding")
   })
 }
 
 function addUser(user) {
+  const creds = {
+    username: user.username,
+    password: user.password
+  }
   console.log("Adding user: ", user)
   $.ajax({
     method: "POST",
     url: USER_URL,
     data: JSON.stringify(user),
     success: function(data) {
+      login(creds)
       getAndDisplayUsers()
+    },
+    error: function(data) {
+      console.log(data)
     }
   })
 }
@@ -183,7 +199,7 @@ function handleUserAdd() {
       password: $(this)
         .find(".pass")
         .val()
-    });
+    })
 
     // $('.login-wrap').hide();
     // $('.map-conatiner').show();
@@ -237,4 +253,7 @@ $(function() {
   handleGatheringDelete()
   handleUserAdd()
   handleLogin()
+  myGatherings()
+  navigator.geolocation.getCurrentPosition(function(position) {
+
 })
