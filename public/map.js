@@ -271,7 +271,6 @@ function codeAddress() {
   console.log(address)
   geocoder.geocode({ address: address }, function(results, status) {
     if (status == "OK") {
-      debugger
       map.setCenter(results[0].geometry.location)
       var marker = new google.maps.Marker({
         map: map,
