@@ -476,5 +476,86 @@ function handleGatheringMarker() {
 
 function setGatheringMarkers() {}
 
-$(showGatheringForm)
-$(handleGatheringMarker)
+function myGatherings() {
+  $.ajax({
+    method: "GET",
+    url: "/gatherings/my",
+    success: displayGatherings
+  })
+}
+
+function displayGatherings(data) {
+  var bounds = new google.maps.LatLngBounds()
+  const gatheringsElement = data.gatherings.map(function(gathering) {
+    let element = $(gatheringTemplate)
+    element.attr("id", gathering.id)
+    element.find(".gathering-title").text(gathering.title)
+    element.find(".number-attending").text(gathering.attending)
+    element.find(".gathering-restaurant").text(gathering.restaurant)
+    element.find(".gathering-address").text(gathering.address)
+    element.find(".gathering-date").text(gathering.date)
+    element.find(".gathering-time").text(gathering.time)
+    const location = new google.maps.LatLng({
+      lat: gathering.lat,
+      lng: gathering.lng
+    })
+    var marker = new google.maps.Marker({
+      map: map,
+      position: location
+    })
+    bounds.extend(marker.position)
+    return element
+  })
+  map.fitBounds(bounds)
+  $(".gatherings").html(gatheringsElement)
+}
+
+function displaySingleGathering(data) {
+  const location = new google.maps.LatLng({
+    lat: data.lat,
+    lng: data.lng
+  })
+  var marker = new google.maps.Marker({
+    map: map,
+    position: location
+  })
+  map.setCenter(location)
+}
+
+function addGathering(gathering) {
+  console.log("Adding gathering: " + gathering)
+  $.ajax({
+    method: "POST",
+    url: GATHERINGS_URL,
+    data: JSON.stringify(gathering),
+    success: displaySingleGathering
+  })
+}
+
+function deleteGathering(gatheringId) {
+  console.log("Deleting gathering`" + gatheringId + "`")
+  $.ajax({
+    url: GATHERINGS_URL + "/" + gatheringId,
+    method: "DELETE",
+    success: getAndDisplayGatherings
+  })
+}
+
+function updateGathering(gathering) {
+  console.log("Updating gathering`" + gathering.id + "`")
+  $.ajax({
+    url: GATHERINGS_URL + "/" + gathering.id,
+    method: "PUT",
+    data: gathering,
+    success: function(data) {
+      getAndDisplayGatherings()
+    }
+  })
+}
+
+$(function() {
+  setupAjax()
+  showGatheringForm()
+  handleGatheringMarker()
+  myGatherings()
+})
