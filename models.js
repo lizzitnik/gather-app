@@ -8,7 +8,9 @@ const gatheringSchema = mongoose.Schema({
   restaurant: { type: String, required: true },
   address: { type: String, required: true },
   date: { type: Date },
-  time: { type: Date }
+  time: { type: Date },
+  lat: { type: Number },
+  lng: { type: Number }
 })
 
 const userSchema = mongoose.Schema({
@@ -29,7 +31,7 @@ const userSchema = mongoose.Schema({
 // 	return {
 // 		host: this.
 // 		gatheringId: Gathering.findById(this.gatheringId).exec().serialize(),
-// 		userId: Gathering.findById(this.userId) 
+// 		userId: Gathering.findById(this.userId)
 // 	}
 // }
 
@@ -50,7 +52,9 @@ gatheringSchema.methods.serialize = function() {
     restaurant: this.restaurant,
     address: this.address,
     date: this.date,
-    time: this.time
+    time: this.time,
+    lat: this.lat,
+    lng: this.lng
   }
 }
 
@@ -65,5 +69,4 @@ userSchema.statics.hashPassword = function(password) {
 const Gathering = mongoose.model("Gathering", gatheringSchema)
 const User = mongoose.model("User", userSchema)
 
-module.exports = {Gathering, User};
-
+module.exports = { Gathering, User }

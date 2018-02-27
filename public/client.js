@@ -23,24 +23,10 @@ const serverBase = "//localhost:8080/"
 const USER_URL = serverBase + "users"
 const GATHERINGS_URL = serverBase + "gatherings"
 
-function getAndDisplayGatherings() {
+function getAndDisplayGatherings(data) {
   console.log("retrieving gatherings")
 
-  $.getJSON(GATHERINGS_URL, function(data) {
-    const gatheringsElement = data.gatherings.map(function(gathering) {
-      let element = $(gatheringTemplate)
-      element.attr("id", gathering.id)
-      element.find(".gathering-title").text(gathering.title)
-      element.find(".number-attending").text(gathering.attending)
-      element.find(".gathering-restaurant").text(gathering.restaurant)
-      element.find(".gathering-address").text(gathering.address)
-      element.find(".gathering-date").text(gathering.date)
-      element.find(".gathering-time").text(gathering.time)
-
-      return element
-    })
-    $(".gatherings").html(gatheringsElement)
-  })
+  $.getJSON(GATHERINGS_URL, displayGatherings)
 }
 
 function myGatherings(gathering) {
@@ -81,6 +67,9 @@ function deleteGathering(gatheringId) {
   })
 }
 
+function getAndDisplayUsers() {}
+
+
 function deleteUser(userId) {
   console.log("Deleting user`" + userId + "`")
   $.ajax({
@@ -101,7 +90,7 @@ function login(userCreds) {
 
 function addTokenToLocalStorage(response) {
   localStorage.setItem("TOKEN", response.authToken)
-  window.location.href = '/map.html';
+  window.location.href = "/map.html"
 }
 
 function handleLogin() {
@@ -118,64 +107,78 @@ function handleLogin() {
         .find(".pass")
         .val()
     })
-
   })
 }
 
-function updateGathering(gathering) {
-  console.log("Updating gathering`" + gathering.id + "`")
-  $.ajax({
-    url: GATHERINGS_URL + "/" + gathering.id,
-    method: "PUT",
-    data: gathering,
-    success: function(data) {
-      getAndDisplayGatherings()
-    }
-  })
-}
+//
+// function codeAddress(address) {
+//   console.log(address)
+//   geocoder.geocode({ address: address }, function(results, status) {
+//     if (status == "OK") {
+//       map.setCenter(results[0].geometry.location)
+//       var marker = new google.maps.Marker({
+//         map: map,
+//         animation: google.maps.Animation.DROP,
+//         position: results[0].geometry.location
+//       })
+//     } else {
+//       alert("Geocode was not successful for the following reason: " + status)
+//     }
+//   })
+// }
 
 function handleGatheringAdd() {
   console.log("preparing to add")
   $(".gathering-form").submit(function(e) {
-    console.log("adding")
     e.preventDefault()
-    addGathering({
-      title: $(this)
-        .find("#title")
-        .val(),
-      restaurant: $(this)
-        .find("#restaurant")
-        .val(),
-      address: $(this)
-        .find("#address")
-        .val(),
-      date: $(this)
-        .find("#date")
-        .val(),
-      time: $(this)
-        .find("#time")
-        .val()
+    const address = $(this)
+      .find("#address")
+      .val()
+    const title = $(this)
+      .find("#title")
+      .val()
+    const restaurant = $(this)
+      .find("#restaurant")
+      .val()
+    const date = $(this)
+      .find("#date")
+      .val()
+    const time = $(this)
+      .find("#time")
+      .val()
+
+    geocoder.geocode({ address: address }, function(results, status) {
+      addGathering({
+        lng: results[0].geometry.location.lng(),
+        lat: results[0].geometry.location.lat(),
+        address: address,
+        date: date,
+        time: time,
+        restaurant: restaurant,
+        title: title
+      })
+      $("#title").val("")
+      $("#restaurant").val("")
+      $("#address").val("")
+      $("#date").val("")
+      $("#time").val("")
     })
-    $("#title").val("")
-    $("#restaurant").val("")
-    $("#address").val("")
-    $("#date").val("")
-    $("#time").val("")
   })
 }
 
 function addUser(user) {
   const creds = {
-        username: user.username,
-        password: user.password
-      }
+    username: user.username,
+    password: user.password
+  }
+
   console.log("Adding user: ", user)
   $.ajax({
     method: "POST",
     url: USER_URL,
     data: JSON.stringify(user),
     success: function(data) {
-      login(data)
+      login(creds)
       getAndDisplayUsers()
     },
     error: function(data) {
@@ -202,7 +205,7 @@ function handleUserAdd() {
       password: $(this)
         .find(".pass")
         .val()
-    });
+    })
 
     // $('.login-wrap').hide();
     // $('.map-conatiner').show();
@@ -251,7 +254,6 @@ function setupAjax() {
 
 $(function() {
   setupAjax()
-  getAndDisplayGatherings()
   handleGatheringAdd()
   handleGatheringDelete()
   handleUserAdd()
