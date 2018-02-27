@@ -1,4 +1,4 @@
-var map, places, infoWindow;
+var map, places, infoWindow, messageWindow;
 var markers = [];
 var geocoder;
 var autocomplete;
@@ -209,7 +209,11 @@ function initMap() {
   map.setMapTypeId('styled_map');
 
   infoWindow = new google.maps.InfoWindow({
-    content: document.getElementById('info-content')
+    content: document.getElementById('gathering-form')
+  });
+
+  messageWindow = new google.maps.InfoWindow({
+    content: document.getElementById('message')
   });
 
   geocoder = new google.maps.Geocoder();
@@ -276,13 +280,13 @@ function search() {
       // Create a marker for each hotel found, and
       // assign a letter of the alphabetic to each marker icon.
       for (var i = 0; i < results.length; i++) {
-        var markerLetter = String.fromCharCode('A'.charCodeAt(0) + (i % 26));
+        var markerUrl = 'http://cdn.onlinewebfonts.com/svg/img_58870.png';
         var markerIcon = MARKER_PATH + markerLetter + '.png';
         // Use marker animation to drop the icons incrementally on the map.
         markers[i] = new google.maps.Marker({
           position: results[i].geometry.location,
           animation: google.maps.Animation.DROP,
-          icon: markerIcon
+          icon: markerUrl
         });
         // If the user clicks a restaurant marker, show the details of that restaurant
         // in an info window.
@@ -328,7 +332,7 @@ function dropMarker(i) {
 }
 
 function addResult(result, i) {
-  var results = document.getElementById('results');
+  //var results = document.getElementById('results');
   var markerLetter = String.fromCharCode('A'.charCodeAt(0) + (i % 26));
   var markerIcon = MARKER_PATH + markerLetter + '.png';
 
@@ -423,6 +427,10 @@ function buildIWContent(place) {
   }
 }
 
+// function createGatheringMarker() {
+
+// }
+
 
 function showGatheringForm() {
   $('.create-button').on('click', function(e) {
@@ -440,7 +448,7 @@ function handleGatheringMarker() {
 }
 
 function setGatheringMarkers() {
-  
+  map.data.loadGeoJson('');
 }
 
 $(showGatheringForm)

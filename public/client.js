@@ -43,6 +43,18 @@ function getAndDisplayGatherings() {
   })
 }
 
+function myGatherings(gathering) {
+  console.log("Adding gathering: " + gathering)
+  $.ajax({
+    method: "GET",
+    url: serverBase + "/mygatherings",
+    data: JSON.stringify(gathering),
+    success: function(data) {
+      getAndDisplayGatherings()
+    }
+  })
+}
+
 function addGathering(gathering) {
   console.log("Adding gathering: " + gathering)
   $.ajax({
@@ -107,7 +119,6 @@ function handleLogin() {
         .val()
     })
 
-
   })
 }
 
@@ -154,13 +165,21 @@ function handleGatheringAdd() {
 }
 
 function addUser(user) {
+  const creds = {
+        username: user.username,
+        password: user.password
+      }
   console.log("Adding user: ", user)
   $.ajax({
     method: "POST",
     url: USER_URL,
     data: JSON.stringify(user),
     success: function(data) {
+      login(data)
       getAndDisplayUsers()
+    },
+    error: function(data) {
+      console.log(data)
     }
   })
 }
@@ -237,4 +256,5 @@ $(function() {
   handleGatheringDelete()
   handleUserAdd()
   handleLogin()
+  myGatherings()
 })
