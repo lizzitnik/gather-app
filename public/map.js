@@ -266,9 +266,7 @@ function initMap() {
     .addEventListener("change", setAutocompleteCountry)
 }
 
-function codeAddress() {
-  var address = document.getElementById("address").value
-  console.log(address)
+function codeAddress(address) {
   geocoder.geocode({ address: address }, function(results, status) {
     if (status == "OK") {
       map.setCenter(results[0].geometry.location)
@@ -459,11 +457,33 @@ function buildIWContent(place) {
   } else {
     document.getElementById("iw-website-row").style.display = "none"
   }
+
+  createGatheringMarker(place);
+
 }
 
-// function createGatheringMarker() {
+function createGatheringMarker(place) {
 
-// }
+  $('#gather-button').on('click', function(e) {
+    e.preventDefault();
+
+    var address = place.formatted_address;
+    infoWindow.close(map, this);
+
+    console.log(address);
+
+    codeAddress(address);
+  })
+    
+  
+
+       // If the user clicks a restaurant marker, show the details of that restaurant
+    // in an info window.
+    // markers[i].placeResult = results[i]
+    // google.maps.event.addListener(markers[i], "click", showInfoWindow)
+    // setTimeout(dropMarker(i), i * 100)
+    // addResult(results[i], i)
+}
 
 
 function showGatheringForm() {
@@ -477,7 +497,8 @@ function showGatheringForm() {
 function handleGatheringMarker() {
   $(".gathering-button").submit(function(e) {
     e.preventDefault()
-    codeAddress()
+    var address = document.getElementById("address").value 
+    codeAddress(address)
   })
 }
 
@@ -493,6 +514,7 @@ function myGatherings() {
 
 function setGatheringMarkers() {
   map.data.loadGeoJson('');
+}
 
 function displayGatherings(data) {
   var bounds = new google.maps.LatLngBounds()
