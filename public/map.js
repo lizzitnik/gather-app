@@ -266,19 +266,20 @@ function initMap() {
     .addEventListener("change", setAutocompleteCountry)
 }
 
-function codeAddress(address) {
-  geocoder.geocode({ address: address }, function(results, status) {
-    if (status == "OK") {
-      map.setCenter(results[0].geometry.location)
-      var marker = new google.maps.Marker({
-        map: map,
-        position: results[0].geometry.location
-      })
-    } else {
-      alert("Geocode was not successful for the following reason: " + status)
-    }
-  })
-}
+// function codeAddress(address) {
+//   geocoder.geocode({ address: address }, function(results, status) {
+//     if (status == "OK") {
+//       map.setCenter(results[0].geometry.location)
+//       var marker = new google.maps.Marker({
+//         map: map,
+//         position: results[0].geometry.location
+//       })
+//     } else {
+//       console.log("Geocode was not successful for the following reason: " + status)
+//     }
+//   })
+//   showGatheringForm();
+// }
 
 // When the user selects a city, get the place details for the city and
 // zoom the map in on the city.
@@ -458,48 +459,42 @@ function buildIWContent(place) {
     document.getElementById("iw-website-row").style.display = "none"
   }
 
-  createGatheringMarker(place);
+  var button = document.getElementById('gather-button');
+  button.addEventListener('click', function() {
+    createGatheringMarker(place);
+  })
 
 }
 
 function createGatheringMarker(place) {
 
-  $('#gather-button').on('click', function(e) {
-    e.preventDefault();
+  console.log(place);
+  var address = place.formatted_address;
 
-    var address = place.formatted_address;
+    console.log(address)
+    
     infoWindow.close(map, this);
 
-    console.log(address);
+    geocoder.geocode({ address: address }, function(results, status) {
+      if (status == "OK") {
+        map.setCenter(results[0].geometry.location)
+        var marker = new google.maps.Marker({
+          map: map,
+          position: results[0].geometry.location
+        })
+      }
+    })
 
-    codeAddress(address);
-  })
-    
-  
-
-       // If the user clicks a restaurant marker, show the details of that restaurant
-    // in an info window.
-    // markers[i].placeResult = results[i]
-    // google.maps.event.addListener(markers[i], "click", showInfoWindow)
-    // setTimeout(dropMarker(i), i * 100)
-    // addResult(results[i], i)
+    showGatheringForm(place);
 }
 
 
 function showGatheringForm() {
-  $(".create-button").on("click", function(e) {
-    e.preventDefault()
-    $(".gathering-form").slideToggle("slow")
-    $(".navigation").hide()
+  infowindow = new google.maps.InfoWindow({
+    content: document.getElementById('gathering-form')
   })
-}
 
-function handleGatheringMarker() {
-  $(".gathering-button").submit(function(e) {
-    e.preventDefault()
-    var address = document.getElementById("address").value 
-    codeAddress(address)
-  })
+  infoWindow.open(map, place)
 }
 
 function setGatheringMarkers() {}
@@ -554,6 +549,45 @@ function displaySingleGathering(data) {
   map.setCenter(location)
 }
 
+function handleGatheringAdd() {
+  console.log("preparing to add")
+  $(".gathering-form").submit(function(e) {
+    e.preventDefault()
+    const address = $(this)
+      .find("#address")
+      .val()
+    const title = $(this)
+      .find("#title")
+      .val()
+    const restaurant = $(this)
+      .find("#restaurant")
+      .val()
+    const date = $(this)
+      .find("#date")
+      .val()
+    const time = $(this)
+      .find("#time")
+      .val()
+
+    geocoder.geocode({ address: address }, function(results, status) {
+      addGathering({
+        lng: results[0].geometry.location.lng(),
+        lat: results[0].geometry.location.lat(),
+        address: results[0].formatted_address,
+        date: date,
+        time: time,
+        restaurant: restaurant,
+        title: title
+      })
+      $("#title").val("")
+      $("#restaurant").val("")
+      $("#address").val("")
+      $("#date").val("")
+      $("#time").val("")
+    })
+  })
+}
+
 function addGathering(gathering) {
   console.log("Adding gathering: " + gathering)
   $.ajax({
@@ -585,9 +619,8 @@ function updateGathering(gathering) {
   })
 }
 
-$(function() {
-  setupAjax()
-  showGatheringForm()
-  handleGatheringMarker()
-  myGatherings()
-})
+// $(function() {
+//   setupAjax()
+//   myGatherings()
+//   handleGatheringAdd()
+// })

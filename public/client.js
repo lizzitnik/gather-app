@@ -29,45 +29,9 @@ function getAndDisplayGatherings(data) {
   $.getJSON(GATHERINGS_URL, displayGatherings)
 }
 
-function myGatherings(gathering) {
-  console.log("Adding gathering: " + gathering)
-  $.ajax({
-    method: "GET",
-    url: serverBase + "/mygatherings",
-    data: JSON.stringify(gathering),
-    success: function(data) {
-      getAndDisplayGatherings()
-    }
-  })
-}
-
-function addGathering(gathering) {
-  console.log("Adding gathering: " + gathering)
-  $.ajax({
-    method: "POST",
-    url: GATHERINGS_URL,
-    data: JSON.stringify(gathering),
-    success: function(data) {
-      getAndDisplayGatherings()
-    }
-  })
-}
-
 function getAndDisplayUsers() {
   console.log('retrieving users')
 }
-
-
-function deleteGathering(gatheringId) {
-  console.log("Deleting gathering`" + gatheringId + "`")
-  $.ajax({
-    url: GATHERINGS_URL + "/" + gatheringId,
-    method: "DELETE",
-    success: getAndDisplayGatherings
-  })
-}
-
-function getAndDisplayUsers() {}
 
 
 function deleteUser(userId) {
@@ -110,23 +74,6 @@ function handleLogin() {
   })
 }
 
-//
-// function codeAddress(address) {
-//   console.log(address)
-//   geocoder.geocode({ address: address }, function(results, status) {
-//     if (status == "OK") {
-//       map.setCenter(results[0].geometry.location)
-//       var marker = new google.maps.Marker({
-//         map: map,
-//         animation: google.maps.Animation.DROP,
-//         position: results[0].geometry.location
-//       })
-//     } else {
-//       alert("Geocode was not successful for the following reason: " + status)
-//     }
-//   })
-// }
-
 function handleGatheringAdd() {
   console.log("preparing to add")
   $(".gathering-form").submit(function(e) {
@@ -151,7 +98,7 @@ function handleGatheringAdd() {
       addGathering({
         lng: results[0].geometry.location.lng(),
         lat: results[0].geometry.location.lat(),
-        address: address,
+        address: results[0].formatted_address,
         date: date,
         time: time,
         restaurant: restaurant,
