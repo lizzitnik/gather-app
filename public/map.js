@@ -489,12 +489,14 @@ function createGatheringMarker(place) {
 }
 
 
-function showGatheringForm() {
-  infowindow = new google.maps.InfoWindow({
-    content: document.getElementById('gathering-form')
-  })
+function showGatheringForm(place) {
+  $('#gathering-form').show();
 
-  infoWindow.open(map, place)
+  // infowindow = new google.maps.InfoWindow({
+  //   content: document.getElementById('gathering-form')
+  // })
+
+  // infoWindow.open(map, place)
 }
 
 function setGatheringMarkers() {}
