@@ -1,4 +1,4 @@
-var map, places, infoWindow
+var map, places
 var markers = []
 var geocoder
 var autocomplete
@@ -240,7 +240,7 @@ function initMap() {
   map.mapTypes.set("styled_map", styledMapType)
   map.setMapTypeId("styled_map")
 
-  infoWindow = new google.maps.InfoWindow({
+  const infoWindow = new google.maps.InfoWindow({
     content: document.getElementById("info-content")
   })
 
@@ -405,13 +405,17 @@ function showInfoWindow() {
     if (status !== google.maps.places.PlacesServiceStatus.OK) {
       return
     }
+    const infoWindow = new google.maps.InfoWindow({
+      content: document.getElementById("info-content")
+    })
+
     infoWindow.open(map, marker)
-    buildIWContent(place)
+    buildIWContent(place, infoWindow)
   })
 }
 
 // Load the place information into the HTML elements used by the info window.
-function buildIWContent(place) {
+function buildIWContent(place, infoWindow) {
   document.getElementById("iw-icon").innerHTML =
     '<img class="restaurantIcon" ' + 'src="' + place.icon + '"/>'
   document.getElementById("iw-url").innerHTML =
@@ -459,44 +463,40 @@ function buildIWContent(place) {
     document.getElementById("iw-website-row").style.display = "none"
   }
 
-  var button = document.getElementById('gather-button');
-  button.addEventListener('click', function() {
-    createGatheringMarker(place);
+  var button = document.getElementById("gather-button")
+  button.addEventListener("click", function() {
+    createGatheringMarker(place, infoWindow)
+  })
+}
+
+function createGatheringMarker(place, infoWindow) {
+  console.log(place)
+  var address = place.formatted_address
+
+  console.log(address)
+
+  infoWindow.close(map, this)
+
+  geocoder.geocode({ address: address }, function(results, status) {
+    if (status == "OK") {
+      map.setCenter(results[0].geometry.location)
+      var marker = new google.maps.Marker({
+        map: map,
+        position: results[0].geometry.location
+      })
+      showGatheringForm(marker)
+    }
+  })
+}
+
+function showGatheringForm(marker) {
+  $("#gathering-form").show()
+
+  const infoWindow = new google.maps.InfoWindow({
+    content: document.getElementById("gathering-form")
   })
 
-}
-
-function createGatheringMarker(place) {
-
-  console.log(place);
-  var address = place.formatted_address;
-
-    console.log(address)
-    
-    infoWindow.close(map, this);
-
-    geocoder.geocode({ address: address }, function(results, status) {
-      if (status == "OK") {
-        map.setCenter(results[0].geometry.location)
-        var marker = new google.maps.Marker({
-          map: map,
-          position: results[0].geometry.location
-        })
-      }
-    })
-
-    showGatheringForm(place);
-}
-
-
-function showGatheringForm(place) {
-  $('#gathering-form').show();
-
-  // infowindow = new google.maps.InfoWindow({
-  //   content: document.getElementById('gathering-form')
-  // })
-
-  // infoWindow.open(map, place)
+  infoWindow.open(map, marker)
 }
 
 function setGatheringMarkers() {}
@@ -510,7 +510,7 @@ function myGatherings() {
 }
 
 function setGatheringMarkers() {
-  map.data.loadGeoJson('');
+  map.data.loadGeoJson("")
 }
 
 function displayGatherings(data) {
