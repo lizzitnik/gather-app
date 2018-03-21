@@ -1,6 +1,7 @@
 
 * {
   box-sizing: border-box;
+  margin: 0;
 }
 
 h1 {
@@ -8,17 +9,99 @@ h1 {
   text-align: center;
   color: white;
   font-size: 120px;
-  margin-bottom: 120px;
+  padding-top: 50px;
+  padding-bottom: 130px;
 }
 
 body{
-  margin:0;
+  margin: 0;
+  padding: 0;
+  height: 100%;
+  font:600 16px/18px 'Open Sans',sans-serif;
+}
+
+header {
+  margin: auto;
+}
+
+header h1 {
+  padding-top: 100px;
+  padding-bottom: 120px;
+  font-size: 100px;
+}
+
+.landing-container {
+  padding: 0px 0px 150px 0px;
+  width: 100%;
+  margin: auto;
+  max-width: 653px;
+  min-height: 653px;
+  position: relative;
+
+}
+
+.landing-container h2 {
+  text-align: center;
+  padding: 10px;
+  font-size: 35px;
+  line-height: 35px;
+}
+
+.landing-container p {
+  padding: 10px;
+}
+
+.landing-container ul {
+  list-style: none;
+  margin-left: 10px;
+  padding-left: 1em;
+  text-indent: -1em;
+}
+
+.landing-container ul li {
+  padding: 10px;
+}
+
+.landing-container ul li:before {
+  content: '»  ';
+}
+
+.landing-container button {
+  margin-top: 30px;
+  text-transform: uppercase;
+  width: 100%;
+  color: #fff;
+  display: block;
+  border: none;
+  padding: 15px 20px;
+  border-radius: 25px;
+  background: rgba(255, 255, 255, 0.1);
+  background: #4a211d;
+}
+
+.landing-container button:hover {
+  background: rgba(74, 33, 29, 0.8);
+  cursor: pointer;
+}
+
+main {
+  display: none;
+}
+
+header {
+  color: #fff;
+  background: 
+    linear-gradient(rgba(0,0,0,0.5),
+      rgba(0,0,0, 1)), 
+    url(https://media.glamour.com/photos/56959a2c93ef4b09520d6401/master/pass/home-2015-11-thanksgiving-dinner-stocksy-main.jpg) no-repeat center;
+}
+
+main {
   color: rgba(211, 170, 149, .7);
   background: 
-    linear-gradient(rgba(255,255,255,0.1),
-      rgba(255,255,255, 0.9)), 
+    linear-gradient(rgba(255,255,255,0),
+      rgba(255,255,255, 0.7)), 
     url(https://media.glamour.com/photos/56959a2c93ef4b09520d6401/master/pass/home-2015-11-thanksgiving-dinner-stocksy-main.jpg) no-repeat center;
-  font:600 16px/18px 'Open Sans',sans-serif;
 }
 
 

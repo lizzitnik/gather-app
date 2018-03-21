@@ -430,8 +430,8 @@ function buildIWContent(place, infoWindow) {
     document.getElementById("iw-phone-row").style.display = "none"
   }
 
-  // Assign a five-star rating to the hotel, using a black star ('&#10029;')
-  // to indicate the rating the hotel has earned, and a white star ('&#10025;')
+  // Assign a five-star rating to the restaurant, using a black star ('&#10029;')
+  // to indicate the rating the restaurant has earned, and a white star ('&#10025;')
   // for the rating points not achieved.
   if (place.rating) {
     var ratingHtml = ""
@@ -499,8 +499,6 @@ function showGatheringForm(marker) {
   infoWindow.open(map, marker)
 }
 
-function setGatheringMarkers() {}
-
 function myGatherings() {
   $.ajax({
     method: "GET",
@@ -551,9 +549,19 @@ function displaySingleGathering(data) {
   map.setCenter(location)
 }
 
+function addGathering(gathering) {
+  console.log("Adding gathering: " + gathering)
+  $.ajax({
+    method: "POST",
+    url: GATHERINGS_URL,
+    data: JSON.stringify(gathering),
+    success: displaySingleGathering
+  })
+}
+
 function handleGatheringAdd() {
   console.log("preparing to add")
-  $(".gathering-form").submit(function(e) {
+  $("#gathering-form").submit(function(e) {
     e.preventDefault()
     const address = $(this)
       .find("#address")
@@ -590,16 +598,6 @@ function handleGatheringAdd() {
   })
 }
 
-function addGathering(gathering) {
-  console.log("Adding gathering: " + gathering)
-  $.ajax({
-    method: "POST",
-    url: GATHERINGS_URL,
-    data: JSON.stringify(gathering),
-    success: displaySingleGathering
-  })
-}
-
 function deleteGathering(gatheringId) {
   console.log("Deleting gathering`" + gatheringId + "`")
   $.ajax({
@@ -621,8 +619,8 @@ function updateGathering(gathering) {
   })
 }
 
-// $(function() {
-//   setupAjax()
-//   myGatherings()
-//   handleGatheringAdd()
-// })
+$(function() {
+  setupAjax()
+  handleGatheringAdd()
+  myGatherings()
+})

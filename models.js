@@ -8,7 +8,7 @@ const gatheringSchema = mongoose.Schema({
   restaurant: { type: String, required: true },
   address: { type: String, required: true },
   date: { type: Date },
-  time: { type: Date },
+  time: { type: String },
   lat: { type: Number },
   lng: { type: Number }
 })

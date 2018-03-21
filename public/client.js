@@ -23,6 +23,15 @@ const serverBase = "//localhost:8080/"
 const USER_URL = serverBase + "users"
 const GATHERINGS_URL = serverBase + "gatherings"
 
+function showLogin() {
+  $('.enter-login').on('click', function(e) {
+    e.preventDefault();
+
+    $('header').hide();
+    $('main').show();
+  })
+}
+
 function getAndDisplayGatherings(data) {
   console.log("retrieving gatherings")
 
@@ -70,45 +79,6 @@ function handleLogin() {
       password: $(this)
         .find(".pass")
         .val()
-    })
-  })
-}
-
-function handleGatheringAdd() {
-  console.log("preparing to add")
-  $(".gathering-form").submit(function(e) {
-    e.preventDefault()
-    const address = $(this)
-      .find("#address")
-      .val()
-    const title = $(this)
-      .find("#title")
-      .val()
-    const restaurant = $(this)
-      .find("#restaurant")
-      .val()
-    const date = $(this)
-      .find("#date")
-      .val()
-    const time = $(this)
-      .find("#time")
-      .val()
-
-    geocoder.geocode({ address: address }, function(results, status) {
-      addGathering({
-        lng: results[0].geometry.location.lng(),
-        lat: results[0].geometry.location.lat(),
-        address: results[0].formatted_address,
-        date: date,
-        time: time,
-        restaurant: restaurant,
-        title: title
-      })
-      $("#title").val("")
-      $("#restaurant").val("")
-      $("#address").val("")
-      $("#date").val("")
-      $("#time").val("")
     })
   })
 }
@@ -200,10 +170,10 @@ function setupAjax() {
 }
 
 $(function() {
+  showLogin()
   setupAjax()
   handleGatheringAdd()
   handleGatheringDelete()
   handleUserAdd()
   handleLogin()
-  myGatherings()
 })
