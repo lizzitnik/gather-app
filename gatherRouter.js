@@ -70,6 +70,7 @@ router.post("/", jwtAuth, (req, res) => {
     lng: req.body.lng
   })
     .then(gathering => {
+      console.log(gathering);
       User.findByIdAndUpdate(
         req.user.id,
         { $push: { gatherings: gathering._id } },

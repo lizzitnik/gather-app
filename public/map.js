@@ -225,6 +225,8 @@ function initMap() {
     }
   ])
 
+  console.log(countries["us"])
+
   map = new google.maps.Map(document.getElementById("map"), {
     zoom: countries["us"].zoom,
     center: countries["us"].center,
@@ -405,20 +407,16 @@ function showInfoWindow() {
     if (status !== google.maps.places.PlacesServiceStatus.OK) {
       return
     }
-    const infoWindow = new google.maps.InfoWindow({
-      content: document.getElementById("info-content")
-    })
 
-    infoWindow.open(map, marker)
-    buildIWContent(place, infoWindow)
+    buildIWContent(map, marker, place)
   })
 }
 
 // Load the place information into the HTML elements used by the info window.
-function buildIWContent(place) {
+function buildIWContent(map, marker, place) {
 console.log(place.formatted_address);
 
-  const fullHtml = `
+  let fullHtml = (`
   <table>
             <tr id="iw-url-row" class="iw_table_row">
               <td id="iw-icon" class="iw_table_icon"></td>
@@ -444,11 +442,13 @@ console.log(place.formatted_address);
               <td><button id='gather-button' type='button'>Create Gathering Here!</button></td>
             </tr>
           </table>
-  `
+  `);
 
   const infoWindow = new google.maps.InfoWindow({
     content: fullHtml
   })
+
+  infoWindow.open(map, marker)
 
 
 
@@ -501,14 +501,15 @@ console.log(place.formatted_address);
 //   }
 
 
-  // var button = document.getElementById("gather-button")
-  // button.addEventListener("click", function() {
-  //   createGatheringMarker(place, infoWindow)
-  // })
+  var button = document.getElementById("gather-button")
+  button.addEventListener("click", function() {
+    createGatheringMarker(place, infoWindow)
+  })
 }
 
 function createGatheringMarker(place, infoWindow) {
   console.log(place)
+
   var address = place.formatted_address
 
   console.log(address)
@@ -523,17 +524,42 @@ function createGatheringMarker(place, infoWindow) {
         position: results[0].geometry.location
       })
 
-      $("#address").val(address);
-      showGatheringForm(marker)
+      
+      showGatheringForm(marker, address)
     }
   })
 }
 
-function showGatheringForm(marker) {
-  $("#gathering-form").show()
+function showGatheringForm(marker, address) {
+  let gatheringHtml = (`<form id='gathering-form' onsubmit='handleGatheringAdd()'>
+        <table>
+          <tr>
+            <td>Title:</td> 
+            <td><input type='text' id='title'/></td> 
+          </tr>
+          <tr>
+            <td>Restaurant:</td> 
+            <td><input type='text' id='restaurant'/></td> 
+          </tr>
+          <tr>
+            <td>Address:</td> 
+            <td><input type='text' id='address' value='${address}'/></td> 
+          </tr>
+          <tr>
+            <td>Date:</td> 
+            <td><input type='date' id='date'/></td> 
+          </tr>
+          <tr>
+            <td>Time:</td> 
+            <td><input type='time' id='time'/></td> 
+          </tr>
+        </table>
+        <button type='submit'>Save</button>
+      </form>`);
+
 
   const infoWindow = new google.maps.InfoWindow({
-    content: document.getElementById("gathering-form")
+    content: gatheringHtml
   })
 
   infoWindow.open(map, marker)
@@ -599,9 +625,8 @@ function addGathering(gathering) {
   })
 }
 
-function handleGatheringAdd() {
+function handleGatheringAdd(e) {
   console.log("preparing to add")
-  $("#gathering-form").submit(function(e) {
     e.preventDefault()
     const address = $(this)
       .find("#address")
@@ -635,7 +660,6 @@ function handleGatheringAdd() {
       $("#date").val("")
       $("#time").val("")
     })
-  })
 }
 
 function deleteGathering(gatheringId) {
@@ -661,6 +685,5 @@ function updateGathering(gathering) {
 
 $(function() {
   setupAjax()
-  handleGatheringAdd()
   myGatherings()
 })
