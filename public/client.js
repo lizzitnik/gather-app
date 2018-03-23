@@ -24,11 +24,11 @@ const USER_URL = serverBase + "users"
 const GATHERINGS_URL = serverBase + "gatherings"
 
 function showLogin() {
-  $('.enter-login').on('click', function(e) {
-    e.preventDefault();
+  $(".enter-login").on("click", function(e) {
+    e.preventDefault()
 
-    $('header').hide();
-    $('main').show();
+    $("header").hide()
+    $("main").show()
   })
 }
 
@@ -39,9 +39,8 @@ function getAndDisplayGatherings(data) {
 }
 
 function getAndDisplayUsers() {
-  console.log('retrieving users')
+  console.log("retrieving users")
 }
-
 
 function deleteUser(userId) {
   console.log("Deleting user`" + userId + "`")
@@ -172,8 +171,6 @@ function setupAjax() {
 $(function() {
   showLogin()
   setupAjax()
-  handleGatheringAdd()
-  handleGatheringDelete()
   handleUserAdd()
   handleLogin()
 })
