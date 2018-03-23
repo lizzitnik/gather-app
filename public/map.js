@@ -653,6 +653,7 @@ function handleGatheringAdd(e, infoWindow) {
     $("#map #date").val("")
     $("#map #time").val("")
     infoWindow.close(map)
+    window.location.reload()
   })
 }
 
