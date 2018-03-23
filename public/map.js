@@ -415,58 +415,96 @@ function showInfoWindow() {
 }
 
 // Load the place information into the HTML elements used by the info window.
-function buildIWContent(place, infoWindow) {
-  document.getElementById("iw-icon").innerHTML =
-    '<img class="restaurantIcon" ' + 'src="' + place.icon + '"/>'
-  document.getElementById("iw-url").innerHTML =
-    '<b><a href="' + place.url + '">' + place.name + "</a></b>"
-  document.getElementById("iw-address").textContent = place.vicinity
+function buildIWContent(place) {
+console.log(place.formatted_address);
 
-  if (place.formatted_phone_number) {
-    document.getElementById("iw-phone-row").style.display = ""
-    document.getElementById("iw-phone").textContent =
-      place.formatted_phone_number
-  } else {
-    document.getElementById("iw-phone-row").style.display = "none"
-  }
+  const fullHtml = `
+  <table>
+            <tr id="iw-url-row" class="iw_table_row">
+              <td id="iw-icon" class="iw_table_icon"></td>
+              <td id="iw-url"></td>
+            </tr>
+            <tr id="iw-address-row" class="iw_table_row">
+              <td class="iw_attribute_name">Address: ${place.formatted_address}</td>
+              <td id="iw-address"></td>
+            </tr>
+            <tr id="iw-phone-row" class="iw_table_row">
+              <td class="iw_attribute_name">Telephone:</td>
+              <td id="iw-phone"></td>
+            </tr>
+            <tr id="iw-rating-row" class="iw_table_row">
+              <td class="iw_attribute_name">Rating:</td>
+              <td id="iw-rating"></td>
+            </tr>
+            <tr id="iw-website-row" class="iw_table_row">
+              <td class="iw_attribute_name">Website:</td>
+              <td id="iw-website"></td>
+            </tr>
+              <td></td>
+              <td><button id='gather-button' type='button'>Create Gathering Here!</button></td>
+            </tr>
+          </table>
+  `
 
-  // Assign a five-star rating to the restaurant, using a black star ('&#10029;')
-  // to indicate the rating the restaurant has earned, and a white star ('&#10025;')
-  // for the rating points not achieved.
-  if (place.rating) {
-    var ratingHtml = ""
-    for (var i = 0; i < 5; i++) {
-      if (place.rating < i + 0.5) {
-        ratingHtml += "&#10025;"
-      } else {
-        ratingHtml += "&#10029;"
-      }
-      document.getElementById("iw-rating-row").style.display = ""
-      document.getElementById("iw-rating").innerHTML = ratingHtml
-    }
-  } else {
-    document.getElementById("iw-rating-row").style.display = "none"
-  }
-
-  // The regexp isolates the first part of the URL (domain plus subdomain)
-  // to give a short URL for displaying in the info window.
-  if (place.website) {
-    var fullUrl = place.website
-    var website = hostnameRegexp.exec(place.website)
-    if (website === null) {
-      website = "http://" + place.website + "/"
-      fullUrl = website
-    }
-    document.getElementById("iw-website-row").style.display = ""
-    document.getElementById("iw-website").textContent = website
-  } else {
-    document.getElementById("iw-website-row").style.display = "none"
-  }
-
-  var button = document.getElementById("gather-button")
-  button.addEventListener("click", function() {
-    createGatheringMarker(place, infoWindow)
+  const infoWindow = new google.maps.InfoWindow({
+    content: fullHtml
   })
+
+
+
+// console.log(place.icon);
+//   // document.getElementById("iw-icon").innerHTML =
+//   //   '<img class="restaurantIcon" ' + 'src="' + place.icon + '"/>'
+//   document.getElementById("iw-url").innerHTML =
+//     '<b><a href="' + place.url + '">' + place.name + "</a></b>"
+//   document.getElementById("iw-address").textContent = place.vicinity
+
+//   if (place.formatted_phone_number) {
+//     document.getElementById("iw-phone-row").style.display = ""
+//     document.getElementById("iw-phone").textContent =
+//       place.formatted_phone_number
+//   } else {
+//     document.getElementById("iw-phone-row").style.display = "none"
+//   }
+
+//   // Assign a five-star rating to the restaurant, using a black star ('&#10029;')
+//   // to indicate the rating the restaurant has earned, and a white star ('&#10025;')
+//   // for the rating points not achieved.
+//   if (place.rating) {
+//     var ratingHtml = ""
+//     for (var i = 0; i < 5; i++) {
+//       if (place.rating < i + 0.5) {
+//         ratingHtml += "&#10025;"
+//       } else {
+//         ratingHtml += "&#10029;"
+//       }
+//       document.getElementById("iw-rating-row").style.display = ""
+//       document.getElementById("iw-rating").innerHTML = ratingHtml
+//     }
+//   } else {
+//     document.getElementById("iw-rating-row").style.display = "none"
+//   }
+
+//   // The regexp isolates the first part of the URL (domain plus subdomain)
+//   // to give a short URL for displaying in the info window.
+//   if (place.website) {
+//     var fullUrl = place.website
+//     var website = hostnameRegexp.exec(place.website)
+//     if (website === null) {
+//       website = "http://" + place.website + "/"
+//       fullUrl = website
+//     }
+//     document.getElementById("iw-website-row").style.display = ""
+//     document.getElementById("iw-website").textContent = website
+//   } else {
+//     document.getElementById("iw-website-row").style.display = "none"
+//   }
+
+
+  // var button = document.getElementById("gather-button")
+  // button.addEventListener("click", function() {
+  //   createGatheringMarker(place, infoWindow)
+  // })
 }
 
 function createGatheringMarker(place, infoWindow) {
@@ -484,6 +522,8 @@ function createGatheringMarker(place, infoWindow) {
         map: map,
         position: results[0].geometry.location
       })
+
+      $("#address").val(address);
       showGatheringForm(marker)
     }
   })
