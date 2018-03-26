@@ -7,7 +7,7 @@ const gatheringSchema = mongoose.Schema({
   attending: { type: Number, default: 0 },
   restaurant: { type: String, required: true },
   address: { type: String, required: true },
-  date: { type: Date },
+  date: { type: String },
   time: { type: String },
   lat: { type: Number },
   lng: { type: Number }

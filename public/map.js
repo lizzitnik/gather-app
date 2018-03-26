@@ -54,7 +54,7 @@ var countries = {
   },
   us: {
     center: { lat: 37.1, lng: -95.7 },
-    zoom: 3
+    zoom: 4
   },
   uk: {
     center: { lat: 54.8, lng: -4.6 },
@@ -268,21 +268,6 @@ function initMap() {
     .addEventListener("change", setAutocompleteCountry)
 }
 
-// function codeAddress(address) {
-//   geocoder.geocode({ address: address }, function(results, status) {
-//     if (status == "OK") {
-//       map.setCenter(results[0].geometry.location)
-//       var marker = new google.maps.Marker({
-//         map: map,
-//         position: results[0].geometry.location
-//       })
-//     } else {
-//       console.log("Geocode was not successful for the following reason: " + status)
-//     }
-//   })
-//   showGatheringForm();
-// }
-
 // When the user selects a city, get the place details for the city and
 // zoom the map in on the city.
 function onPlaceChanged() {
@@ -290,8 +275,9 @@ function onPlaceChanged() {
   if (place.geometry) {
     map.panTo(place.geometry.location)
     map.setZoom(15)
-    setGatheringMarkers()
     search()
+    allGatherings()
+    myGatherings()
   } else {
     document.getElementById("autocomplete").placeholder = "Enter a city"
   }
@@ -317,7 +303,6 @@ function search() {
         // Use marker animation to drop the icons incrementally on the map.
         markers[i] = new google.maps.Marker({
           position: results[i].geometry.location,
-          animation: google.maps.Animation.DROP,
           icon: markerIcon
         })
 
@@ -414,31 +399,47 @@ function showInfoWindow() {
 
 // Load the place information into the HTML elements used by the info window.
 function buildIWContent(map, marker, place) {
-  console.log(place.formatted_address)
+  console.log(place)
+
+  if (place.rating) {
+    var ratingHtml = '';
+    for (var i = 0; i< 5; i++) {
+      if (place.rating < (i + 0.5)) {
+        ratingHtml += '&#10025;';
+      } else {
+        ratingHtml += '&#10029;';
+      }
+    }
+  }
 
   let fullHtml = `
   <table>
             <tr id="iw-url-row" class="iw_table_row">
-              <td id="iw-icon" class="iw_table_icon"></td>
-              <td id="iw-url"></td>
+              <td id="iw-icon" class="iw_table_icon">
+                <img class="restaurantIcon" src="${place.icon}"/>
+              </td>
+              <td id="iw-url">
+                <b><a href="${place.url}>${place.name}</a></b>"
+              </td>
             </tr>
             <tr id="iw-address-row" class="iw_table_row">
-              <td class="iw_attribute_name">Address: ${
-                place.formatted_address
-              }</td>
-              <td id="iw-address"></td>
+              <td class="iw_attribute_name">Address: 
+              </td>
+              <td id="iw-address">${place.formatted_address}</td>
             </tr>
             <tr id="iw-phone-row" class="iw_table_row">
               <td class="iw_attribute_name">Telephone:</td>
-              <td id="iw-phone"></td>
+              <td id="iw-phone">${place.formatted_phone_number}</td>
             </tr>
             <tr id="iw-rating-row" class="iw_table_row">
               <td class="iw_attribute_name">Rating:</td>
-              <td id="iw-rating"></td>
+              <td id="iw-rating">${ratingHtml}</td>
             </tr>
             <tr id="iw-website-row" class="iw_table_row">
               <td class="iw_attribute_name">Website:</td>
-              <td id="iw-website"></td>
+              <td id="iw-website">
+                <a href='${place.website}'>${place.website}</a>
+              </td>
             </tr>
               <td></td>
               <td><button id='gather-button' type='button'>Create Gathering Here!</button></td>
@@ -452,66 +453,17 @@ function buildIWContent(map, marker, place) {
 
   infoWindow.open(map, marker)
 
-  // console.log(place.icon);
-  //   // document.getElementById("iw-icon").innerHTML =
-  //   //   '<img class="restaurantIcon" ' + 'src="' + place.icon + '"/>'
-  //   document.getElementById("iw-url").innerHTML =
-  //     '<b><a href="' + place.url + '">' + place.name + "</a></b>"
-  //   document.getElementById("iw-address").textContent = place.vicinity
-
-  //   if (place.formatted_phone_number) {
-  //     document.getElementById("iw-phone-row").style.display = ""
-  //     document.getElementById("iw-phone").textContent =
-  //       place.formatted_phone_number
-  //   } else {
-  //     document.getElementById("iw-phone-row").style.display = "none"
-  //   }
-
-  //   // Assign a five-star rating to the restaurant, using a black star ('&#10029;')
-  //   // to indicate the rating the restaurant has earned, and a white star ('&#10025;')
-  //   // for the rating points not achieved.
-  //   if (place.rating) {
-  //     var ratingHtml = ""
-  //     for (var i = 0; i < 5; i++) {
-  //       if (place.rating < i + 0.5) {
-  //         ratingHtml += "&#10025;"
-  //       } else {
-  //         ratingHtml += "&#10029;"
-  //       }
-  //       document.getElementById("iw-rating-row").style.display = ""
-  //       document.getElementById("iw-rating").innerHTML = ratingHtml
-  //     }
-  //   } else {
-  //     document.getElementById("iw-rating-row").style.display = "none"
-  //   }
-
-  //   // The regexp isolates the first part of the URL (domain plus subdomain)
-  //   // to give a short URL for displaying in the info window.
-  //   if (place.website) {
-  //     var fullUrl = place.website
-  //     var website = hostnameRegexp.exec(place.website)
-  //     if (website === null) {
-  //       website = "http://" + place.website + "/"
-  //       fullUrl = website
-  //     }
-  //     document.getElementById("iw-website-row").style.display = ""
-  //     document.getElementById("iw-website").textContent = website
-  //   } else {
-  //     document.getElementById("iw-website-row").style.display = "none"
-  //   }
-
   var button = document.getElementById("gather-button")
   button.addEventListener("click", function() {
     createGatheringMarker(place, infoWindow)
+    marker.setMap(null);
   })
 }
 
 function createGatheringMarker(place, infoWindow) {
-  console.log(place)
-
+  //console.log(place)
   var address = place.formatted_address
-
-  console.log(address)
+  var restaurant = place.name
 
   infoWindow.close(map, this)
 
@@ -523,12 +475,13 @@ function createGatheringMarker(place, infoWindow) {
         position: results[0].geometry.location
       })
 
-      showGatheringForm(marker, address)
+      showGatheringForm(marker, address, restaurant)
     }
   })
 }
 
-function showGatheringForm(marker, address) {
+function showGatheringForm(marker, address, restaurant) {
+
   let gatheringHtml = `<form id='gathering-form'>
         <table>
           <tr>
@@ -537,7 +490,7 @@ function showGatheringForm(marker, address) {
           </tr>
           <tr>
             <td>Restaurant:</td>
-            <td><input type='text' id='restaurant'/></td>
+            <td><input type='text' id='restaurant' value='${restaurant}'/></td>
           </tr>
           <tr>
             <td>Address:</td>
@@ -568,42 +521,115 @@ function showGatheringForm(marker, address) {
   })
 }
 
-function myGatherings() {
+function allGatherings() {
   $.ajax({
     method: "GET",
-    url: "/gatherings/my",
-    success: displayGatherings
+    url: "/gatherings",
+    success: displayGatheringMarkers
   })
 }
 
-function setGatheringMarkers() {
-  map.data.loadGeoJson("")
-}
+function displayGatheringMarkers(data) {
 
-function displayGatherings(data) {
-  var bounds = new google.maps.LatLngBounds()
   const gatheringsElement = data.gatherings.map(function(gathering) {
-    let element = $(gatheringTemplate)
-    element.attr("id", gathering.id)
-    element.find(".gathering-title").text(gathering.title)
-    element.find(".number-attending").text(gathering.attending)
-    element.find(".gathering-restaurant").text(gathering.restaurant)
-    element.find(".gathering-address").text(gathering.address)
-    element.find(".gathering-date").text(gathering.date)
-    element.find(".gathering-time").text(gathering.time)
+    
+
     const location = new google.maps.LatLng({
       lat: gathering.lat,
       lng: gathering.lng
     })
     var marker = new google.maps.Marker({
       map: map,
-      position: location
+      position: location,
+      animation: google.maps.Animation.DROP,
+      label: 'G'
     })
-    bounds.extend(marker.position)
-    return element
+
+    let hoverHtml = (`
+      <h2>${gathering.title}</h2>
+      <p>${gathering.address}</p>
+      <p>${gathering.restaurant}</p>
+      <p>on ${gathering.date} at ${gathering.time}</p>
+      <p>Number attending: ${gathering.attending}</p>
+      <button>Join Gathering</button>
+    `)
+
+    const hoverWindow = new google.maps.InfoWindow({
+      content: hoverHtml
+    })
+
+   marker.addListener('click', function() {
+        hoverWindow.open(map, marker)
+      })
   })
-  map.fitBounds(bounds)
-  $(".gatherings").html(gatheringsElement)
+}
+
+
+function showGatheringInfo(map, marker, gathering) {
+  console.log(gathering);
+  // let infoHtml = (`
+  //   <h2>
+  // `)
+}
+
+function myGatherings() {
+  $.ajax({
+    method: "GET",
+    url: "/gatherings/my",
+    success: displayMyGatherings
+  })
+}
+
+function displayMyGatherings(data) {
+  // var bounds = new google.maps.LatLngBounds()
+  const myGatheringsElement = data.gatherings.map(function(gathering) {
+
+    // let element = $(gatheringTemplate)
+    // element.attr("id", gathering.id)
+    // element.find(".gathering-title").text(gathering.title)
+    // element.find(".number-attending").text(gathering.attending)
+    // element.find(".gathering-restaurant").text(gathering.restaurant)
+    // element.find(".gathering-address").text(gathering.address)
+    // element.find(".gathering-date").text(gathering.date)
+    // element.find(".gathering-time").text(gathering.time)
+
+    const location = new google.maps.LatLng({
+      lat: gathering.lat,
+      lng: gathering.lng
+    })
+    var marker = new google.maps.Marker({
+      map: map,
+      position: location,
+      animation: google.maps.Animation.DROP
+    })
+
+    let hoverHtml = `
+      <h3>This is your gathering!</h3>
+      <p>${gathering.title} will begin at ${gathering.time} on 
+      ${gathering.date}</p>
+      <p>Number attending: ${gathering.attending}</p>
+      <button type='button' id='delete-button'>Delete Gathering</button>
+    `
+
+    const hoverWindow = new google.maps.InfoWindow({
+      content: hoverHtml
+    })
+
+   marker.addListener('click', function() {
+        hoverWindow.open(map, marker)
+    })
+
+    var button = document.getElementById("delete-button")
+
+    button.addEventListener("click", function() {
+      deleteGathering(gathering.id)
+    })
+    // bounds.extend(marker.position)
+    // return element
+  })
+  // map.fitBounds(bounds)
+  // map.setZoom(17)
+  $(".gatherings").html(myGatheringsElement)
 }
 
 function displaySingleGathering(data) {
@@ -613,9 +639,11 @@ function displaySingleGathering(data) {
   })
   var marker = new google.maps.Marker({
     map: map,
-    position: location
+    position: location,
+    label: 'M'
   })
   map.setCenter(location)
+
 }
 
 function addGathering(gathering) {
@@ -653,7 +681,6 @@ function handleGatheringAdd(e, infoWindow) {
     $("#map #date").val("")
     $("#map #time").val("")
     infoWindow.close(map)
-    window.location.reload()
   })
 }
 
@@ -680,5 +707,15 @@ function updateGathering(gathering) {
 
 $(function() {
   setupAjax()
-  myGatherings()
+  //myGatherings()
 })
+
+
+// problems
+//   drops multiple markers
+//     differentiate between others gatherings and my gatherings
+//   delete gathering button doesn't work
+//   increment number attending
+//   restaurant markers overlay gathering markers
+//   unauthorization in testing
+  
