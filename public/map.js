@@ -686,7 +686,9 @@ function deleteGathering(gatheringId) {
   $.ajax({
     url: GATHERINGS_URL + "/" + gatheringId,
     method: "DELETE",
-    success: getAndDisplayGatherings
+    complete: function(data) {
+      getAndDisplayGatherings()
+    }
   })
 }
 
