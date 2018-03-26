@@ -303,7 +303,8 @@ function search() {
         // Use marker animation to drop the icons incrementally on the map.
         markers[i] = new google.maps.Marker({
           position: results[i].geometry.location,
-          icon: markerIcon
+          icon: markerIcon,
+          zIndex: -1
         })
 
         // If the user clicks a restaurant marker, show the details of that restaurant
@@ -402,12 +403,12 @@ function buildIWContent(map, marker, place) {
   console.log(place)
 
   if (place.rating) {
-    var ratingHtml = '';
-    for (var i = 0; i< 5; i++) {
-      if (place.rating < (i + 0.5)) {
-        ratingHtml += '&#10025;';
+    var ratingHtml = ""
+    for (var i = 0; i < 5; i++) {
+      if (place.rating < i + 0.5) {
+        ratingHtml += "&#10025;"
       } else {
-        ratingHtml += '&#10029;';
+        ratingHtml += "&#10029;"
       }
     }
   }
@@ -423,7 +424,7 @@ function buildIWContent(map, marker, place) {
               </td>
             </tr>
             <tr id="iw-address-row" class="iw_table_row">
-              <td class="iw_attribute_name">Address: 
+              <td class="iw_attribute_name">Address:
               </td>
               <td id="iw-address">${place.formatted_address}</td>
             </tr>
@@ -456,7 +457,7 @@ function buildIWContent(map, marker, place) {
   var button = document.getElementById("gather-button")
   button.addEventListener("click", function() {
     createGatheringMarker(place, infoWindow)
-    marker.setMap(null);
+    marker.setMap(null)
   })
 }
 
@@ -481,7 +482,6 @@ function createGatheringMarker(place, infoWindow) {
 }
 
 function showGatheringForm(marker, address, restaurant) {
-
   let gatheringHtml = `<form id='gathering-form'>
         <table>
           <tr>
@@ -530,10 +530,7 @@ function allGatherings() {
 }
 
 function displayGatheringMarkers(data) {
-
   const gatheringsElement = data.gatherings.map(function(gathering) {
-    
-
     const location = new google.maps.LatLng({
       lat: gathering.lat,
       lng: gathering.lng
@@ -542,31 +539,30 @@ function displayGatheringMarkers(data) {
       map: map,
       position: location,
       animation: google.maps.Animation.DROP,
-      label: 'G'
+      label: "G"
     })
 
-    let hoverHtml = (`
+    let hoverHtml = `
       <h2>${gathering.title}</h2>
       <p>${gathering.address}</p>
       <p>${gathering.restaurant}</p>
       <p>on ${gathering.date} at ${gathering.time}</p>
       <p>Number attending: ${gathering.attending}</p>
-      <button>Join Gathering</button>
-    `)
+      <button >Join Gathering</button>
+    `
 
     const hoverWindow = new google.maps.InfoWindow({
       content: hoverHtml
     })
 
-   marker.addListener('click', function() {
-        hoverWindow.open(map, marker)
-      })
+    marker.addListener("click", function() {
+      hoverWindow.open(map, marker)
+    })
   })
 }
 
-
 function showGatheringInfo(map, marker, gathering) {
-  console.log(gathering);
+  console.log(gathering)
   // let infoHtml = (`
   //   <h2>
   // `)
@@ -582,8 +578,7 @@ function myGatherings() {
 
 function displayMyGatherings(data) {
   // var bounds = new google.maps.LatLngBounds()
-  const myGatheringsElement = data.gatherings.map(function(gathering) {
-
+  const myGatheringsElement = data.gatherings.map(function(gathering, index) {
     // let element = $(gatheringTemplate)
     // element.attr("id", gathering.id)
     // element.find(".gathering-title").text(gathering.title)
@@ -600,30 +595,33 @@ function displayMyGatherings(data) {
     var marker = new google.maps.Marker({
       map: map,
       position: location,
-      animation: google.maps.Animation.DROP
+      animation: google.maps.Animation.DROP,
+      zIndex: 999
     })
 
     let hoverHtml = `
       <h3>This is your gathering!</h3>
-      <p>${gathering.title} will begin at ${gathering.time} on 
+      <p>${gathering.title} will begin at ${gathering.time} on
       ${gathering.date}</p>
       <p>Number attending: ${gathering.attending}</p>
-      <button type='button' id='delete-button'>Delete Gathering</button>
+      <button type='button' onclick="deleteGathering('${
+        gathering.id
+      }')" id='delete-button'>Delete Gathering</button>
     `
 
     const hoverWindow = new google.maps.InfoWindow({
       content: hoverHtml
     })
 
-   marker.addListener('click', function() {
-        hoverWindow.open(map, marker)
+    marker.addListener("click", function() {
+      hoverWindow.open(map, marker)
     })
 
-    var button = document.getElementById("delete-button")
-
-    button.addEventListener("click", function() {
-      deleteGathering(gathering.id)
-    })
+    // var button = document.getElementById(`delete-button-${index}`)
+    //
+    // button.addEventListener("click", function() {
+    //   deleteGathering(gathering.id)
+    // })
     // bounds.extend(marker.position)
     // return element
   })
@@ -640,10 +638,9 @@ function displaySingleGathering(data) {
   var marker = new google.maps.Marker({
     map: map,
     position: location,
-    label: 'M'
+    label: "M"
   })
   map.setCenter(location)
-
 }
 
 function addGathering(gathering) {
@@ -710,7 +707,6 @@ $(function() {
   //myGatherings()
 })
 
-
 // problems
 //   drops multiple markers
 //     differentiate between others gatherings and my gatherings
@@ -718,4 +714,3 @@ $(function() {
 //   increment number attending
 //   restaurant markers overlay gathering markers
 //   unauthorization in testing
-  
