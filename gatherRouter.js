@@ -70,7 +70,7 @@ router.post("/", jwtAuth, (req, res) => {
     lng: req.body.lng
   })
     .then(gathering => {
-      console.log(gathering);
+      console.log(gathering)
       User.findByIdAndUpdate(
         req.user.id,
         { $push: { gatherings: gathering._id } },
@@ -118,10 +118,14 @@ router.put("/:id", (req, res) => {
 })
 
 router.delete("/:id", (req, res) => {
-  Gathering.findByIdAndRemove(req.params.id).then(() => {
-    console.log(`Deleted blog post with id \`${req.params.id}\``)
-    res.status(204).end()
-  })
+  Gathering.findByIdAndRemove(req.params.id)
+    .then(() => {
+      console.log(`Deleted blog post with id \`${req.params.id}\``)
+      res.status(204).json({ id: req.params.id })
+    })
+    .catch(err => {
+      res.send(err)
+    })
 })
 
 router.use("*", function(req, res) {

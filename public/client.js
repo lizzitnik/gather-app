@@ -35,7 +35,9 @@ function showLogin() {
 function getAndDisplayGatherings(data) {
   console.log("retrieving gatherings")
 
-  $.getJSON(GATHERINGS_URL, displayGatherings)
+  $.getJSON(GATHERINGS_URL, function() {
+    allGatherings()
+  })
 }
 
 function getAndDisplayUsers() {
