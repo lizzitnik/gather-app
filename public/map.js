@@ -521,150 +521,6 @@ function showGatheringForm(marker, address, restaurant) {
   })
 }
 
-function allGatherings() {
-  $.ajax({
-    method: "GET",
-    url: "/gatherings",
-    success: displayGatheringMarkers
-  })
-}
-
-function displayGatheringMarkers(data) {
-  const gatheringsElement = data.gatherings.map(function(gathering) {
-    const location = new google.maps.LatLng({
-      lat: gathering.lat,
-      lng: gathering.lng
-    })
-    var marker = new google.maps.Marker({
-      map: map,
-      position: location,
-      animation: google.maps.Animation.DROP,
-      label: "G"
-    })
-
-    let hoverHtml = `
-      <h2>${gathering.title}</h2>
-      <p>${gathering.address}</p>
-      <p>${gathering.restaurant}</p>
-      <p>on ${gathering.date} at ${gathering.time}</p>
-      <p>Number attending: ${gathering.attending}</p>
-      <button >Join Gathering</button>
-    `
-
-    const hoverWindow = new google.maps.InfoWindow({
-      content: hoverHtml
-    })
-
-    marker.addListener("click", function() {
-      hoverWindow.open(map, marker)
-    })
-  })
-}
-
-function showGatheringInfo(map, marker, gathering) {
-  console.log(gathering)
-  // let infoHtml = (`
-  //   <h2>
-  // `)
-}
-
-function myGatherings() {
-  $.ajax({
-    method: "GET",
-    url: "/gatherings/my",
-    success: displayMyGatherings
-  })
-}
-
-function displayMyGatherings(data) {
-  // var bounds = new google.maps.LatLngBounds()
-  const myGatheringsElement = data.gatherings.map(function(gathering, index) {
-    // let element = $(gatheringTemplate)
-    // element.attr("id", gathering.id)
-    // element.find(".gathering-title").text(gathering.title)
-    // element.find(".number-attending").text(gathering.attending)
-    // element.find(".gathering-restaurant").text(gathering.restaurant)
-    // element.find(".gathering-address").text(gathering.address)
-    // element.find(".gathering-date").text(gathering.date)
-    // element.find(".gathering-time").text(gathering.time)
-
-    const location = new google.maps.LatLng({
-      lat: gathering.lat,
-      lng: gathering.lng
-    })
-    var marker = new google.maps.Marker({
-      map: map,
-      position: location,
-      animation: google.maps.Animation.DROP,
-      zIndex: 999
-    })
-
-    let hoverHtml = `
-      <h3>This is your gathering!</h3>
-      <p>${gathering.title} will begin at ${gathering.time} on
-      ${gathering.date}</p>
-      <p>Number attending: ${gathering.attending}</p>
-<<<<<<< HEAD
-      <button type='button' id='delete-button-${index}'>Delete Gathering</button>
-=======
-      <button type='button' onclick="deleteGathering('${
-        gathering.id
-      }')" id='delete-button'>Delete Gathering</button>
->>>>>>> ac2db8765fdd6a5d8c2ed8e5a609a61157e73402
-    `
-
-    const hoverWindow = new google.maps.InfoWindow({
-      content: hoverHtml
-    })
-
-    marker.addListener("click", function() {
-      hoverWindow.open(map, marker)
-    })
-
-<<<<<<< HEAD
-    var button = document.getElementById("delete-button-${index}")
-
-    button.addEventListener("click", function() {
-      deleteGathering(gathering.id)
-    })
-=======
-    // var button = document.getElementById(`delete-button-${index}`)
-    //
-    // button.addEventListener("click", function() {
-    //   deleteGathering(gathering.id)
-    // })
->>>>>>> ac2db8765fdd6a5d8c2ed8e5a609a61157e73402
-    // bounds.extend(marker.position)
-    // return element
-  })
-  // map.fitBounds(bounds)
-  // map.setZoom(17)
-  $(".gatherings").html(myGatheringsElement)
-}
-
-function displaySingleGathering(data) {
-  const location = new google.maps.LatLng({
-    lat: data.lat,
-    lng: data.lng
-  })
-  var marker = new google.maps.Marker({
-    map: map,
-    position: location,
-    label: "M"
-  })
-  map.setCenter(location)
-}
-
-function addGathering(gathering) {
-  console.log("Adding gathering: " + gathering)
-  $.ajax({
-    method: "POST",
-    url: GATHERINGS_URL,
-    data: JSON.stringify(gathering),
-    success: displaySingleGathering
-  })
-}
-
 function handleGatheringAdd(e, infoWindow) {
   console.log("preparing to add")
   e.preventDefault()
@@ -693,15 +549,240 @@ function handleGatheringAdd(e, infoWindow) {
   })
 }
 
+function addGathering(gathering) {
+  console.log("Adding gathering: " + gathering) 
+  $.ajax({
+    method: "POST",
+    url: GATHERINGS_URL,
+    data: JSON.stringify(gathering),
+    success: function(data) {
+      displaySingleGathering()
+    }
+  })
+}
+
+function displaySingleGathering(data) {
+  const location = new google.maps.LatLng({
+    lat: data.lat,
+    lng: data.lng
+  })
+  var marker = new google.maps.Marker({
+    map: map,
+    position: location,
+    label: "M"
+  })
+  map.setCenter(location)
+}
+
+
+function myGatherings() {
+  $.ajax({
+    method: "GET",
+    url: "/gatherings/my",
+    success: displayMyGatherings
+  })
+}
+
+function displayMyGatherings(data) {
+  // var bounds = new google.maps.LatLngBounds()
+  const myGatheringsElement = data.gatherings.map(function(gathering, index) {
+
+    const location = new google.maps.LatLng({
+      lat: gathering.lat,
+      lng: gathering.lng
+    })
+    var marker = new google.maps.Marker({
+      map: map,
+      position: location,
+      animation: google.maps.Animation.DROP,
+      zIndex: 999
+    })
+
+    let hoverHtml = `
+      <h3>This is your gathering!</h3>
+      <p>${gathering.title} will begin at ${gathering.time} on
+      ${gathering.date}</p>
+      <p>Number attending: ${gathering.attending}</p>
+    `
+
+    const hoverWindow = new google.maps.InfoWindow({
+      content: hoverHtml
+    })
+
+    marker.addListener("mouseover", function() {
+      hoverWindow.open(map, marker)
+    })
+    marker.addListener("mouseout", function() {
+      hoverWindow.close(map)
+    })
+
+    
+
+    showMyGatheringResults(data, gathering, marker)
+
+    // var button = document.getElementById(`delete-button-${index}`)
+    //
+    // button.addEventListener("click", function() {
+    //   deleteGathering(gathering.id)
+    // })
+    // bounds.extend(marker.position)
+    // return element
+  })
+  // map.fitBounds(bounds)
+  // map.setZoom(17)
+}
+
+function showMyGatheringResults(data, gathering, marker) {
+  var results = document.getElementById("my-gathering-results")
+  var markerIcon = 'http://maps.google.com/mapfiles/ms/icons/red-dot.png'
+
+  var tr = document.createElement("tr")
+  tr.style.backgroundColor = "#FFFFFF"
+  tr.onmouseover = function() {
+    google.maps.event.trigger(marker, "mouseover")
+  }
+  tr.onmouseout = function() {
+    google.maps.event.trigger(marker, 'mouseout')
+  }
+
+  var iconTd = document.createElement("td")
+  var titleTd = document.createElement("td")
+  var buttonTd = document.createElement("td")
+  var icon = document.createElement("img")
+  
+  icon.src = markerIcon
+  icon.setAttribute("class", "gatherIcon")
+  icon.setAttribute("className", "gatherIcon")
+  var deleteButton = document.createElement("input")
+  deleteButton.setAttribute("type", "button")
+  deleteButton.setAttribute("value", "Delete")
+
+  var title = document.createTextNode(gathering.title)
+  iconTd.appendChild(icon)
+  titleTd.appendChild(title)
+  buttonTd.appendChild(deleteButton)
+  tr.appendChild(iconTd)
+  tr.appendChild(titleTd)
+  tr.appendChild(buttonTd)
+  results.appendChild(tr)
+
+  deleteButton.onclick = function() {
+    deleteGathering(gathering.id)
+  }
+}
+
+function allGatherings() {
+  $.ajax({
+    method: "GET",
+    url: "/gatherings",
+    success: displayGatheringMarkers
+    
+  })
+}
+
+function displayGatheringMarkers(data) {
+
+  const gatheringsElement = data.gatherings.map(function(gathering) {
+    const location = new google.maps.LatLng({
+      lat: gathering.lat,
+      lng: gathering.lng
+    })
+    var marker = new google.maps.Marker({
+      map: map,
+      position: location,
+      animation: google.maps.Animation.DROP,
+      label: "G"
+    })
+
+
+    let hoverHtml = `
+      <h2>${gathering.title}</h2>
+      <p>${gathering.address}</p>
+      <p>${gathering.restaurant}</p>
+      <p>on ${gathering.date} at ${gathering.time}</p>
+      <p>Number attending: ${gathering.attending}</p>
+      <button >Join Gathering</button>
+    `
+
+    const hoverWindow = new google.maps.InfoWindow({
+      content: hoverHtml
+    })
+
+    marker.addListener("mouseover", function() {
+      hoverWindow.open(map, marker)
+    })
+    marker.addListener("mouseout", function() {
+      hoverWindow.close(map)
+    })
+
+
+    showGatheringResults(data, gathering, marker)
+
+  })
+
+}
+
+function showGatheringResults(data, gathering, marker) {
+
+
+  var results = document.getElementById("gathering-results")
+  var markerIcon = 'http://maps.google.com/mapfiles/ms/icons/red-dot.png'
+
+  // let gatheringResultsElement = `
+  //   <tr id="gatheringTable">
+  //     <td>
+  //       <img class="gatherIcon" src='${markerIcon}'>
+  //     </td>
+  //     <td>
+  //       <h3 class="gatherTitle">${gathering.title}</h3>
+  //     </td>
+  //     <td>
+  //       <button id="gatherJoinButton" type="button" onclick=
+  //       "handleNumberAttending('${gathering}')">Join</button>
+  //     </td>
+  //   </tr>
+  // `
+
+  var tr = document.createElement("tr")
+  tr.style.backgroundColor = "#FFFFFF"
+  tr.onmouseover = function() {
+    google.maps.event.trigger(marker, "mouseover")
+  }
+  tr.onmouseout = function() {
+    google.maps.event.trigger(marker, 'mouseout')
+  }
+
+  var iconTd = document.createElement("td")
+  var titleTd = document.createElement("td")
+  var buttonTd = document.createElement("td")
+  var icon = document.createElement("img")
+  
+  icon.src = markerIcon
+  icon.setAttribute("class", "gatherIcon")
+  icon.setAttribute("className", "gatherIcon")
+  var joinButton = document.createElement("input")
+  joinButton.setAttribute("type", "button")
+  joinButton.setAttribute("value", "Join")
+
+  var title = document.createTextNode(gathering.title)
+  iconTd.appendChild(icon)
+  titleTd.appendChild(title)
+  buttonTd.appendChild(joinButton)
+  tr.appendChild(iconTd)
+  tr.appendChild(titleTd)
+  tr.appendChild(buttonTd)
+  results.appendChild(tr)
+
+  joinButton.onclick = function() {
+    handleNumberAttending(gathering)
+  }
+}
+
 function deleteGathering(gatheringId) {
   console.log("Deleting gathering`" + gatheringId + "`")
   $.ajax({
     url: GATHERINGS_URL + "/" + gatheringId,
     method: "DELETE",
-    // success: function(data){
-    //   getAndDisplayGatherings()
-    // }
-    
     complete: function(data) {
       getAndDisplayGatherings()
     }
@@ -709,6 +790,7 @@ function deleteGathering(gatheringId) {
 }
 
 function updateGathering(gathering) {
+  console.log(gathering)
   console.log("Updating gathering`" + gathering.id + "`")
   $.ajax({
     url: GATHERINGS_URL + "/" + gathering.id,
@@ -732,7 +814,3 @@ $(function() {
 //   increment number attending
 //   restaurant markers overlay gathering markers
 //   unauthorization in testing
-<<<<<<< HEAD
-
-=======
->>>>>>> ac2db8765fdd6a5d8c2ed8e5a609a61157e73402

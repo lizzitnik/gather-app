@@ -22,20 +22,26 @@ table {
   min-height: 781px;
 }
 
-#listing {
+#listing, #gathering-listing, #my-gathering-listing {
   position: absolute;
   width: 300px;
   height: 90%;
   overflow: auto;
-  right: 10px;
-  top: 40px;
+  left: 10px;
+  top: 50px;
   bottom: 200px;
   cursor: pointer;
   overflow-x: hidden;
   border-radius: 4px;
-
 }
 
+#gathering-listing, #my-gathering-listing {
+left: 1150px;
+}
+
+#my-gathering-listing {
+  top: 400px;
+}
 #findrestaurants {
   position: absolute;
   text-align: left;
@@ -79,10 +85,11 @@ table {
   width: 24px;
   height: 24px;
 }
-#resultsTable {
+#resultsTable, #gathering-results-table, #my-gathering-results-table {
   border-collapse: collapse;
   width: 240px;
 }
+
 #rating {
   font-size: 13px;
   font-family: Arial Unicode MS;

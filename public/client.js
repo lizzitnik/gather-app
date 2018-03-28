@@ -146,18 +146,14 @@ function handleGatheringDelete() {
   })
 }
 
-function handleNumberAttending() {
-  $(".gatherings").on("click", ".gathering-join", function(e) {
-    e.preventDefault()
-    let element = $(this).closest(".gathering")
+function handleNumberAttending(gathering) {
 
-    let attending = parseInt(element.find(".number-attending").text()) + 1
+    let attending = gathering.attending + 1
     let item = {
-      id: element.attr("id"),
+      id: gathering.id,
       attending: attending
     }
     updateGathering(item)
-  })
 }
 
 function setupAjax() {
