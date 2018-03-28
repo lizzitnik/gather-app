@@ -608,7 +608,7 @@ function displayMyGatherings(data) {
       <p>${gathering.title} will begin at ${gathering.time} on 
       ${gathering.date}</p>
       <p>Number attending: ${gathering.attending}</p>
-      <button type='button' id='delete-button'>Delete Gathering</button>
+      <button type='button' id='delete-button-${index}'>Delete Gathering</button>
     `
 
     const hoverWindow = new google.maps.InfoWindow({
@@ -619,7 +619,7 @@ function displayMyGatherings(data) {
         hoverWindow.open(map, marker)
     })
 
-    var button = document.getElementById("delete-button")
+    var button = document.getElementById("delete-button-${index}")
 
     button.addEventListener("click", function() {
       deleteGathering(gathering.id)
@@ -689,7 +689,10 @@ function deleteGathering(gatheringId) {
   $.ajax({
     url: GATHERINGS_URL + "/" + gatheringId,
     method: "DELETE",
-    success: getAndDisplayGatherings
+    success: function(data){
+      getAndDisplayGatherings()
+    }
+    
   })
 }
 
@@ -718,4 +721,4 @@ $(function() {
 //   increment number attending
 //   restaurant markers overlay gathering markers
 //   unauthorization in testing
-  
+
