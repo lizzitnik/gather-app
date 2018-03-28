@@ -633,6 +633,7 @@ function showMyGatheringResults(data, gathering, marker) {
   var markerIcon = "http://maps.google.com/mapfiles/ms/icons/red-dot.png"
 
   var tr = document.createElement("tr")
+  tr.setAttribute("id", `gathering-${gathering.id}`)
   tr.style.backgroundColor = "#FFFFFF"
   tr.onmouseover = function() {
     google.maps.event.trigger(marker, "mouseover")
@@ -759,7 +760,7 @@ function deleteGathering(gatheringId) {
     url: GATHERINGS_URL + "/" + gatheringId,
     method: "DELETE",
     complete: function(data) {
-      displayDeleteSuccess()
+      displayDeleteSuccess(gatheringId)
     }
   })
 }
@@ -777,8 +778,8 @@ function updateGathering(gathering, marker) {
   })
 }
 
-function displayDeleteSuccess(data) {
-  console.log(data)
+function displayDeleteSuccess(gatheringId) {
+  $(`#gathering-${gatheringId}`).remove()
 }
 
 function displayUpdated(data, marker) {
