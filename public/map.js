@@ -550,7 +550,7 @@ function handleGatheringAdd(e, infoWindow) {
 }
 
 function addGathering(gathering) {
-  console.log("Adding gathering: " + gathering) 
+  console.log("Adding gathering: " + gathering)
   $.ajax({
     method: "POST",
     url: GATHERINGS_URL,
@@ -574,7 +574,6 @@ function displaySingleGathering(data) {
   map.setCenter(location)
 }
 
-
 function myGatherings() {
   $.ajax({
     method: "GET",
@@ -586,7 +585,6 @@ function myGatherings() {
 function displayMyGatherings(data) {
   // var bounds = new google.maps.LatLngBounds()
   const myGatheringsElement = data.gatherings.map(function(gathering, index) {
-
     const location = new google.maps.LatLng({
       lat: gathering.lat,
       lng: gathering.lng
@@ -616,8 +614,6 @@ function displayMyGatherings(data) {
       hoverWindow.close(map)
     })
 
-    
-
     showMyGatheringResults(data, gathering, marker)
 
     // var button = document.getElementById(`delete-button-${index}`)
@@ -634,7 +630,7 @@ function displayMyGatherings(data) {
 
 function showMyGatheringResults(data, gathering, marker) {
   var results = document.getElementById("my-gathering-results")
-  var markerIcon = 'http://maps.google.com/mapfiles/ms/icons/red-dot.png'
+  var markerIcon = "http://maps.google.com/mapfiles/ms/icons/red-dot.png"
 
   var tr = document.createElement("tr")
   tr.style.backgroundColor = "#FFFFFF"
@@ -642,14 +638,14 @@ function showMyGatheringResults(data, gathering, marker) {
     google.maps.event.trigger(marker, "mouseover")
   }
   tr.onmouseout = function() {
-    google.maps.event.trigger(marker, 'mouseout')
+    google.maps.event.trigger(marker, "mouseout")
   }
 
   var iconTd = document.createElement("td")
   var titleTd = document.createElement("td")
   var buttonTd = document.createElement("td")
   var icon = document.createElement("img")
-  
+
   icon.src = markerIcon
   icon.setAttribute("class", "gatherIcon")
   icon.setAttribute("className", "gatherIcon")
@@ -676,12 +672,10 @@ function allGatherings() {
     method: "GET",
     url: "/gatherings",
     success: displayGatheringMarkers
-    
   })
 }
 
 function displayGatheringMarkers(data) {
-
   const gatheringsElement = data.gatherings.map(function(gathering) {
     const location = new google.maps.LatLng({
       lat: gathering.lat,
@@ -693,7 +687,6 @@ function displayGatheringMarkers(data) {
       animation: google.maps.Animation.DROP,
       label: "G"
     })
-
 
     let hoverHtml = `
       <h2>${gathering.title}</h2>
@@ -715,48 +708,27 @@ function displayGatheringMarkers(data) {
       hoverWindow.close(map)
     })
 
-
     showGatheringResults(data, gathering, marker)
-
   })
-
 }
 
 function showGatheringResults(data, gathering, marker) {
-
-
   var results = document.getElementById("gathering-results")
-  var markerIcon = 'http://maps.google.com/mapfiles/ms/icons/red-dot.png'
-
-  // let gatheringResultsElement = `
-  //   <tr id="gatheringTable">
-  //     <td>
-  //       <img class="gatherIcon" src='${markerIcon}'>
-  //     </td>
-  //     <td>
-  //       <h3 class="gatherTitle">${gathering.title}</h3>
-  //     </td>
-  //     <td>
-  //       <button id="gatherJoinButton" type="button" onclick=
-  //       "handleNumberAttending('${gathering}')">Join</button>
-  //     </td>
-  //   </tr>
-  // `
-
+  var markerIcon = "http://maps.google.com/mapfiles/ms/icons/red-dot.png"
   var tr = document.createElement("tr")
   tr.style.backgroundColor = "#FFFFFF"
   tr.onmouseover = function() {
     google.maps.event.trigger(marker, "mouseover")
   }
   tr.onmouseout = function() {
-    google.maps.event.trigger(marker, 'mouseout')
+    google.maps.event.trigger(marker, "mouseout")
   }
 
   var iconTd = document.createElement("td")
   var titleTd = document.createElement("td")
   var buttonTd = document.createElement("td")
   var icon = document.createElement("img")
-  
+
   icon.src = markerIcon
   icon.setAttribute("class", "gatherIcon")
   icon.setAttribute("className", "gatherIcon")
@@ -773,8 +745,11 @@ function showGatheringResults(data, gathering, marker) {
   tr.appendChild(buttonTd)
   results.appendChild(tr)
 
+  let numAttending = gathering.attending
+
   joinButton.onclick = function() {
-    handleNumberAttending(gathering)
+    numAttending++
+    handleNumberAttending(gathering, numAttending, marker)
   }
 }
 
@@ -784,22 +759,30 @@ function deleteGathering(gatheringId) {
     url: GATHERINGS_URL + "/" + gatheringId,
     method: "DELETE",
     complete: function(data) {
-      getAndDisplayGatherings()
+      displayDeleteSuccess()
     }
   })
 }
 
-function updateGathering(gathering) {
+function updateGathering(gathering, marker) {
   console.log(gathering)
   console.log("Updating gathering`" + gathering.id + "`")
   $.ajax({
     url: GATHERINGS_URL + "/" + gathering.id,
     method: "PUT",
-    data: gathering,
+    data: JSON.stringify(gathering),
     success: function(data) {
-      getAndDisplayGatherings()
+      displayUpdated(data, marker)
     }
   })
+}
+
+function displayDeleteSuccess(data) {
+  console.log(data)
+}
+
+function displayUpdated(data, marker) {
+  showMyGatheringResults(data, data, marker)
 }
 
 $(function() {

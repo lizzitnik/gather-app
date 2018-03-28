@@ -6,9 +6,8 @@
   box-sizing: border-box;
 }
 
-
-
-html, body {
+html,
+body {
   margin: 0;
   padding: 0;
   height: 100%;
@@ -22,12 +21,14 @@ table {
   min-height: 781px;
 }
 
-#listing, #gathering-listing, #my-gathering-listing {
+#listing,
+#gathering-listing,
+#my-gathering-listing {
   position: absolute;
   width: 300px;
   height: 90%;
   overflow: auto;
-  left: 10px;
+  right: 50px;
   top: 50px;
   bottom: 200px;
   cursor: pointer;
@@ -35,8 +36,9 @@ table {
   border-radius: 4px;
 }
 
-#gathering-listing, #my-gathering-listing {
-left: 1150px;
+#gathering-listing,
+#my-gathering-listing {
+  left: 1150px;
 }
 
 #my-gathering-listing {
@@ -85,7 +87,9 @@ left: 1150px;
   width: 24px;
   height: 24px;
 }
-#resultsTable, #gathering-results-table, #my-gathering-results-table {
+#resultsTable,
+#gathering-results-table,
+#my-gathering-results-table {
   border-collapse: collapse;
   width: 240px;
 }
@@ -130,9 +134,3 @@ left: 1150px;
 .gathering-form:after {
   display: block;
 }
-
-
-
-
-
-

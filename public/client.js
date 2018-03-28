@@ -146,14 +146,12 @@ function handleGatheringDelete() {
   })
 }
 
-function handleNumberAttending(gathering) {
-
-    let attending = gathering.attending + 1
-    let item = {
-      id: gathering.id,
-      attending: attending
-    }
-    updateGathering(item)
+function handleNumberAttending(gathering, numAttending, marker) {
+  let item = {
+    id: gathering.id,
+    attending: numAttending
+  }
+  updateGathering(item, marker)
 }
 
 function setupAjax() {
