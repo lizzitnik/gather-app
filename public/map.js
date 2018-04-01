@@ -803,14 +803,6 @@ function updateGathering(gathering, marker) {
   })
 }
 
-function displayDeleted() {
-  $('#').
-}
-
-function displayUpdated(data, marker) {
-  showGatheringResults()
-}
-
 $(function() {
   setupAjax()
 })
