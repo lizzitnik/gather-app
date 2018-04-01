@@ -113,7 +113,7 @@ router.put("/:id", (req, res) => {
   })
 
   Gathering.findByIdAndUpdate(req.params.id, { $set: updated }, { new: true })
-    .then(updatedPost => res.status(204).end())
+    .then(updatedPost => res.status(200).end())
     .catch(err => res.status(500).json({ message: "Something went wrong" }))
 })
 
@@ -121,7 +121,7 @@ router.delete("/:id", (req, res) => {
   Gathering.findByIdAndRemove(req.params.id)
     .then(() => {
       console.log(`Deleted blog post with id \`${req.params.id}\``)
-      res.status(204).json({ id: req.params.id })
+      res.status(200).json({ id: req.params.id })
     })
     .catch(err => {
       res.send(err)

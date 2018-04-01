@@ -96,7 +96,7 @@ describe('Gathering', function() {
 						.send(updateData);
 				})
 				.then(function(res) {
-					expect(res).to.have.status(204);
+					expect(res).to.have.status(200);
 				});
 
 		});
@@ -114,7 +114,7 @@ describe('Gathering', function() {
 						.delete(`/gatherings/${gathering.id}`);
 				})
 				.then(function(res) {
-					expect(res).to.have.status(204);
+					expect(res).to.have.status(200);
 				})
 		})
 	})

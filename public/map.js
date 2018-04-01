@@ -462,7 +462,6 @@ function buildIWContent(map, marker, place) {
 }
 
 function createGatheringMarker(place, infoWindow) {
-  //console.log(place)
   var address = place.formatted_address
   var restaurant = place.name
 
@@ -773,8 +772,10 @@ function showGatheringResults(data, gathering, marker) {
   tr.appendChild(buttonTd)
   results.appendChild(tr)
 
+  const numAttending = gathering.attending
   joinButton.onclick = function() {
-    handleNumberAttending(gathering)
+    numAttending++
+    handleNumberAttending(gathering, numAttending)
   }
 }
 
@@ -784,12 +785,12 @@ function deleteGathering(gatheringId) {
     url: GATHERINGS_URL + "/" + gatheringId,
     method: "DELETE",
     complete: function(data) {
-      getAndDisplayGatherings()
+      displayDeleted()
     }
   })
 }
 
-function updateGathering(gathering) {
+function updateGathering(gathering, marker) {
   console.log(gathering)
   console.log("Updating gathering`" + gathering.id + "`")
   $.ajax({
@@ -797,20 +798,19 @@ function updateGathering(gathering) {
     method: "PUT",
     data: gathering,
     success: function(data) {
-      getAndDisplayGatherings()
+      displayUpdated(data, marker)
     }
   })
 }
 
+function displayDeleted() {
+  $('#').
+}
+
+function displayUpdated(data, marker) {
+  showGatheringResults()
+}
+
 $(function() {
   setupAjax()
-  //myGatherings()
 })
-
-// problems
-//   drops multiple markers
-//     differentiate between others gatherings and my gatherings
-//   delete gathering button doesn't work
-//   increment number attending
-//   restaurant markers overlay gathering markers
-//   unauthorization in testing

@@ -124,14 +124,6 @@ function handleUserAdd() {
         .find(".pass")
         .val()
     })
-
-    // $('.login-wrap').hide();
-    // $('.map-conatiner').show();
-
-    // $('.first-name').val('');
-    // $('.last-name').val('');
-    // $('.user').val('');
-    // $('.pass').val('');
   })
 }
 
@@ -146,12 +138,12 @@ function handleGatheringDelete() {
   })
 }
 
-function handleNumberAttending(gathering) {
+function handleNumberAttending(gathering, numAttending) {
 
     let attending = gathering.attending + 1
     let item = {
       id: gathering.id,
-      attending: attending
+      attending: numAttending
     }
     updateGathering(item)
 }
