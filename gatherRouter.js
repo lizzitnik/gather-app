@@ -89,7 +89,7 @@ router.post("/", jwtAuth, (req, res) => {
 router.delete("/:id", (req, res) => {
   Gathering.findByIdAndRemove(req.params.id)
     .then(() => {
-      res.status(204).json({ message: "success" })
+      res.status(201).json({ message: "success" })
     })
     .catch(err => {
       console.error(err)
@@ -113,7 +113,10 @@ router.put("/:id", (req, res) => {
   })
 
   Gathering.findByIdAndUpdate(req.params.id, { $set: updated }, { new: true })
-    .then(updatedPost => res.status(200).end())
+    .then(updatedPost => {
+      debugger
+      res.status(201).json(updatedPost.serialize())
+    })
     .catch(err => res.status(500).json({ message: "Something went wrong" }))
 })
 
@@ -121,7 +124,7 @@ router.delete("/:id", (req, res) => {
   Gathering.findByIdAndRemove(req.params.id)
     .then(() => {
       console.log(`Deleted blog post with id \`${req.params.id}\``)
-      res.status(200).json({ id: req.params.id })
+      res.status(201).json({ id: req.params.id })
     })
     .catch(err => {
       res.send(err)

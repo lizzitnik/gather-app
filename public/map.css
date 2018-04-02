@@ -6,9 +6,8 @@
   box-sizing: border-box;
 }
 
-
-
-html, body {
+html,
+body {
   margin: 0;
   padding: 0;
   height: 100%;
@@ -22,26 +21,46 @@ table {
   min-height: 781px;
 }
 
-#listing, #gathering-listing, #my-gathering-listing {
+#listing {
   position: absolute;
   width: 300px;
   height: 90%;
   overflow: auto;
-  left: 10px;
+  right: 10px;
   top: 50px;
   bottom: 200px;
   cursor: pointer;
-  overflow-x: hidden;
   border-radius: 4px;
 }
 
-#gathering-listing, #my-gathering-listing {
-left: 1150px;
+.list-heading {
+  color: white;
+  text-align: center;
+  margin-bottom: 5px;
+}
+
+#gathering-listing, #upcoming-gathering-listing, #my-gathering-listing {
+  position: absolute;
+  width: 300px;
+  height: 300px;
+  overflow-x: hidden;
+  top: 50px;
+  cursor: pointer;
+  left: 10px;
+  background: rgba(74, 33, 29, 0.6);
+  visibility: hidden;
+}
+
+#upcoming-gathering-listing {
+  top: 350px;
+  height: 250px;
 }
 
 #my-gathering-listing {
-  top: 400px;
+  top: 600px;
+  height: 150px;
 }
+
 #findrestaurants {
   position: absolute;
   text-align: left;
@@ -85,9 +104,18 @@ left: 1150px;
   width: 24px;
   height: 24px;
 }
-#resultsTable, #gathering-results-table, #my-gathering-results-table {
+#resultsTable {
   border-collapse: collapse;
   width: 240px;
+}
+
+#gathering-results-table, #upcoming-gathering-results-table,
+#my-gathering-results-table {
+  border-collapse: collapse;
+  width: 260px;
+  margin: 0 auto;
+  overflow: auto;
+  overflow-x: hidden;
 }
 
 #rating {
@@ -130,9 +158,3 @@ left: 1150px;
 .gathering-form:after {
   display: block;
 }
-
-
-
-
-
-

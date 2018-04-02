@@ -225,8 +225,6 @@ function initMap() {
     }
   ])
 
-  console.log(countries["us"])
-
   map = new google.maps.Map(document.getElementById("map"), {
     zoom: countries["us"].zoom,
     center: countries["us"].center,
@@ -276,6 +274,11 @@ function onPlaceChanged() {
     map.panTo(place.geometry.location)
     map.setZoom(15)
     search()
+
+    document.getElementById('gathering-listing').style.visibility = "visible"
+    document.getElementById('upcoming-gathering-listing').style.visibility = "visible"
+    document.getElementById('my-gathering-listing').style.visibility = "visible"
+
     allGatherings()
     myGatherings()
   } else {
@@ -549,13 +552,14 @@ function handleGatheringAdd(e, infoWindow) {
 }
 
 function addGathering(gathering) {
-  console.log("Adding gathering: " + gathering) 
+  console.log("Adding gathering: " + gathering)
   $.ajax({
     method: "POST",
     url: GATHERINGS_URL,
     data: JSON.stringify(gathering),
     success: function(data) {
       displaySingleGathering()
+      displayMyGatherings()
     }
   })
 }
@@ -573,7 +577,6 @@ function displaySingleGathering(data) {
   map.setCenter(location)
 }
 
-
 function myGatherings() {
   $.ajax({
     method: "GET",
@@ -585,7 +588,6 @@ function myGatherings() {
 function displayMyGatherings(data) {
   // var bounds = new google.maps.LatLngBounds()
   const myGatheringsElement = data.gatherings.map(function(gathering, index) {
-
     const location = new google.maps.LatLng({
       lat: gathering.lat,
       lng: gathering.lng
@@ -615,8 +617,6 @@ function displayMyGatherings(data) {
       hoverWindow.close(map)
     })
 
-    
-
     showMyGatheringResults(data, gathering, marker)
 
     // var button = document.getElementById(`delete-button-${index}`)
@@ -633,22 +633,23 @@ function displayMyGatherings(data) {
 
 function showMyGatheringResults(data, gathering, marker) {
   var results = document.getElementById("my-gathering-results")
-  var markerIcon = 'http://maps.google.com/mapfiles/ms/icons/red-dot.png'
+  var markerIcon = "http://maps.google.com/mapfiles/ms/icons/red-dot.png"
 
   var tr = document.createElement("tr")
+  tr.setAttribute("id", `gathering-${gathering.id}`)
   tr.style.backgroundColor = "#FFFFFF"
   tr.onmouseover = function() {
     google.maps.event.trigger(marker, "mouseover")
   }
   tr.onmouseout = function() {
-    google.maps.event.trigger(marker, 'mouseout')
+    google.maps.event.trigger(marker, "mouseout")
   }
 
   var iconTd = document.createElement("td")
   var titleTd = document.createElement("td")
   var buttonTd = document.createElement("td")
   var icon = document.createElement("img")
-  
+
   icon.src = markerIcon
   icon.setAttribute("class", "gatherIcon")
   icon.setAttribute("className", "gatherIcon")
@@ -675,12 +676,10 @@ function allGatherings() {
     method: "GET",
     url: "/gatherings",
     success: displayGatheringMarkers
-    
   })
 }
 
 function displayGatheringMarkers(data) {
-
   const gatheringsElement = data.gatherings.map(function(gathering) {
     const location = new google.maps.LatLng({
       lat: gathering.lat,
@@ -693,14 +692,12 @@ function displayGatheringMarkers(data) {
       label: "G"
     })
 
-
     let hoverHtml = `
       <h2>${gathering.title}</h2>
       <p>${gathering.address}</p>
       <p>${gathering.restaurant}</p>
       <p>on ${gathering.date} at ${gathering.time}</p>
       <p>Number attending: ${gathering.attending}</p>
-      <button >Join Gathering</button>
     `
 
     const hoverWindow = new google.maps.InfoWindow({
@@ -714,48 +711,27 @@ function displayGatheringMarkers(data) {
       hoverWindow.close(map)
     })
 
-
     showGatheringResults(data, gathering, marker)
-
   })
-
 }
 
 function showGatheringResults(data, gathering, marker) {
-
-
   var results = document.getElementById("gathering-results")
-  var markerIcon = 'http://maps.google.com/mapfiles/ms/icons/red-dot.png'
-
-  // let gatheringResultsElement = `
-  //   <tr id="gatheringTable">
-  //     <td>
-  //       <img class="gatherIcon" src='${markerIcon}'>
-  //     </td>
-  //     <td>
-  //       <h3 class="gatherTitle">${gathering.title}</h3>
-  //     </td>
-  //     <td>
-  //       <button id="gatherJoinButton" type="button" onclick=
-  //       "handleNumberAttending('${gathering}')">Join</button>
-  //     </td>
-  //   </tr>
-  // `
-
+  var markerIcon = "http://maps.google.com/mapfiles/ms/icons/red-dot.png"
   var tr = document.createElement("tr")
   tr.style.backgroundColor = "#FFFFFF"
   tr.onmouseover = function() {
     google.maps.event.trigger(marker, "mouseover")
   }
   tr.onmouseout = function() {
-    google.maps.event.trigger(marker, 'mouseout')
+    google.maps.event.trigger(marker, "mouseout")
   }
 
   var iconTd = document.createElement("td")
   var titleTd = document.createElement("td")
   var buttonTd = document.createElement("td")
   var icon = document.createElement("img")
-  
+
   icon.src = markerIcon
   icon.setAttribute("class", "gatherIcon")
   icon.setAttribute("className", "gatherIcon")
@@ -772,10 +748,51 @@ function showGatheringResults(data, gathering, marker) {
   tr.appendChild(buttonTd)
   results.appendChild(tr)
 
-  const numAttending = gathering.attending
+  let numAttending = gathering.attending
+
   joinButton.onclick = function() {
     numAttending++
-    handleNumberAttending(gathering, numAttending)
+    handleNumberAttending(gathering, numAttending, marker)
+  }
+}
+
+function showUpcomingGatheringResults(data, gathering, marker) {
+  var results = document.getElementById("upcoming-gathering-results")
+  var markerIcon = "http://maps.google.com/mapfiles/ms/icons/red-dot.png"
+
+  var tr = document.createElement("tr")
+  tr.setAttribute("id", `gathering-${gathering.id}`)
+  tr.style.backgroundColor = "#FFFFFF"
+  tr.onmouseover = function() {
+    google.maps.event.trigger(marker, "mouseover")
+  }
+  tr.onmouseout = function() {
+    google.maps.event.trigger(marker, "mouseout")
+  }
+
+  var iconTd = document.createElement("td")
+  var titleTd = document.createElement("td")
+  var buttonTd = document.createElement("td")
+  var icon = document.createElement("img")
+
+  icon.src = markerIcon
+  icon.setAttribute("class", "gatherIcon")
+  icon.setAttribute("className", "gatherIcon")
+  var deleteButton = document.createElement("input")
+  deleteButton.setAttribute("type", "button")
+  deleteButton.setAttribute("value", "Delete")
+
+  var title = document.createTextNode(gathering.title)
+  iconTd.appendChild(icon)
+  titleTd.appendChild(title)
+  buttonTd.appendChild(deleteButton)
+  tr.appendChild(iconTd)
+  tr.appendChild(titleTd)
+  tr.appendChild(buttonTd)
+  results.appendChild(tr)
+
+  deleteButton.onclick = function() {
+    deleteGathering(gathering.id)
   }
 }
 
@@ -785,7 +802,8 @@ function deleteGathering(gatheringId) {
     url: GATHERINGS_URL + "/" + gatheringId,
     method: "DELETE",
     complete: function(data) {
-      displayDeleted()
+
+      displayDeleteSuccess(gatheringId)
     }
   })
 }
@@ -796,11 +814,19 @@ function updateGathering(gathering, marker) {
   $.ajax({
     url: GATHERINGS_URL + "/" + gathering.id,
     method: "PUT",
-    data: gathering,
+    data: JSON.stringify(gathering),
     success: function(data) {
       displayUpdated(data, marker)
     }
   })
+}
+
+function displayDeleteSuccess(gatheringId) {
+  $(`#gathering-${gatheringId}`).remove()
+}
+
+function displayUpdated(data, marker) {
+  showUpcomingGatheringResults(data, data, marker)
 }
 
 $(function() {
